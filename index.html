@@ -406,7 +406,6 @@ h1,h2,h3{font-family:var(--font-display);font-weight:700;margin:0;color:var(--in
 
   <!-- Toast -->
   <div class="toast" id="toast" hidden></div>
-
   <script>
 /* ===========================================================
    Escala Kids — Verbo Casa Caiada
@@ -457,7 +456,7 @@ function seed(){
   ];
   return {
     settings:{ church:"Verbo Casa Caiada", dept:"Departamento Infantil",
-               notify:false, reminderTime:"08:00", meId:"" },
+               notify:false, reminderTime:"08:00", meId:"", role:"lider" },
     rooms, services, members,
     events:[],          // eventos pontuais {id,date,title,time,note}
     schedules:{}        // { occKey: { roomId: [memberId,...] } }
@@ -502,6 +501,21 @@ function upcomingOccs(days=21){
 }
 function schedFor(key){ return DB.schedules[key] || {}; }
 function assignedCount(key){ const s=schedFor(key); return Object.values(s).reduce((a,arr)=>a+arr.length,0); }
+
+/* Papel do usuário (escaffolding p/ Supabase: aqui é só modo de visualização) */
+function isLeader(){ return (DB.settings.role||"lider")!=="voluntario"; }
+
+/* Todas as ocorrências dentro de um mês do calendário */
+function occsInMonth(y,m){
+  const days=new Date(y,m+1,0).getDate(); const out=[];
+  for(let d=1;d<=days;d++){ out.push(...occsOnDate(`${y}-${String(m+1).padStart(2,"0")}-${String(d).padStart(2,"0")}`)); }
+  return out;
+}
+/* Ocorrências em que um membro está escalado dentro de um mês */
+function myOccsInMonth(mid,y,m){
+  return occsInMonth(y,m).filter(o=>{ const s=schedFor(o.key);
+    return Object.keys(s).some(rid=>s[rid].includes(mid)); });
+}
 
 /* ---------------- Roteador ---------------- */
 const VIEWS = {
@@ -622,54 +636,90 @@ function renderHome(c){
 }
 
 /* =====================================================================
-   VIEW: ESCALA
+   VIEW: ESCALA (visão de mês)
    ===================================================================== */
+let escYear, escMonth;
 function renderEscala(c){
-  document.getElementById("topActions").innerHTML =
-    `<button class="icon-btn" data-action="new-schedule" aria-label="Montar escala">
-      <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></button>`;
+  const t=today();
+  if(escYear==null){ escYear=t.getFullYear(); escMonth=t.getMonth(); }
+  const leader = isLeader();
+  const me = DB.settings.meId ? getMember(DB.settings.meId) : null;
 
-  const occs = upcomingOccs(28);
-  let html = "";
+  if(leader){
+    document.getElementById("topActions").innerHTML =
+      `<button class="icon-btn" data-action="new-schedule" aria-label="Montar escala">
+        <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></button>`;
+  }
+
+  // navegador de mês
+  let html = `<div class="cal-head" style="margin-bottom:12px">
+      <div class="cal-month">${MONTHS[escMonth]} ${escYear}</div>
+      <div class="cal-nav">
+        <button data-action="esc-prev"><svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg></button>
+        <button data-action="esc-today" style="width:auto;padding:0 12px;font-family:var(--font-display);font-weight:700;font-size:13px">Hoje</button>
+        <button data-action="esc-next"><svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg></button>
+      </div>
+    </div>`;
+
+  const occs = occsInMonth(escYear, escMonth);
 
   if(!occs.length){
-    html = emptyState("📅","Nenhum culto à vista","Cadastre cultos e eventos na aba Agenda para começar a montar a escala.",
-      `<button class="btn btn-primary" data-action="goto" data-view="calendario">Ir para Agenda</button>`);
+    html += emptyState("📅","Nenhum culto neste mês",
+      leader?"Cadastre cultos da semana e eventos na aba Agenda. Eles aparecem aqui automaticamente.":"O líder ainda não cadastrou cultos para este mês.",
+      leader?`<button class="btn btn-primary" data-action="goto" data-view="calendario">Ir para Agenda</button>`:"");
     c.innerHTML = html; return;
   }
 
-  // agrupar por data
-  const byDate = {};
-  occs.forEach(o=>{ (byDate[o.date] = byDate[o.date]||[]).push(o); });
+  // resumo do mês
+  const full = occs.filter(o=>assignedCount(o.key)>0).length;
+  const meCount = me ? myOccsInMonth(me.id, escYear, escMonth).length : 0;
+  html += `<div class="stats" style="margin:0 0 16px">
+    <div class="stat"><b>${occs.length}</b><span>cultos no mês</span></div>
+    <div class="stat"><b>${full}</b><span>com escala</span></div>
+    <div class="stat"><b>${me?meCount:"—"}</b><span>${me?"meus dias":"defina quem é você"}</span></div>
+  </div>`;
 
-  html += `<button class="btn btn-primary btn-block" data-action="new-schedule" style="margin-bottom:6px">
-    <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg> Montar nova escala</button>`;
+  if(leader){
+    html += `<button class="btn btn-primary btn-block" data-action="new-schedule" style="margin-bottom:14px">
+      <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg> Montar nova escala</button>`;
+  }
 
-  Object.keys(byDate).forEach(date=>{
-    html += `<div class="sched-day">
-      <div class="sched-head"><div class="sched-date">${fmtLong(date)}</div></div>`;
-    byDate[date].forEach(o=>{
-      const sched = schedFor(o.key);
-      const n = assignedCount(o.key);
-      html += `<div class="sched-room" style="border-left:4px solid ${o.color}">
-        <div class="room-ico" style="background:${o.color}22;color:${o.color}">${o.type==="evento"?"🎉":"⛪"}</div>
-        <div class="sched-room-names"><div class="sched-room-title">${esc(o.title)} ${o.time?"<span class='sched-when'>• "+o.time+"</span>":""}</div>
-          ${n? n+" escalado(s)" : "Sem escala"}</div>
-        <button class="btn btn-ghost" data-action="open-occ" data-key="${o.key}" style="padding:8px 14px;font-size:13px">${n?"Ver":"Montar"}</button>
-      </div>`;
-      // detalhe das salas com gente escalada
-      Object.keys(sched).forEach(rid=>{
-        if(!sched[rid].length) return;
-        const r=getRoom(rid); if(!r) return;
-        const people = sched[rid].map(id=>getMember(id)).filter(Boolean);
-        html += `<div style="display:flex;align-items:center;gap:10px;padding:6px 13px 6px 50px">
-          <span class="chip" style="background:${r.bg};color:${r.fg}">${r.emoji} ${esc(r.name)}</span>
-          <div class="ava-row">${people.slice(0,5).map(p=>ava(p.name,p.id)).join("")}
-            ${people.length>5?`<div class="ava-more">+${people.length-5}</div>`:""}</div>
+  // agrupa por semana do mês
+  const byWeek = {};
+  occs.forEach(o=>{ const d=parseYmd(o.date);
+    const wk=Math.ceil((d.getDate()+new Date(escYear,escMonth,1).getDay())/7);
+    (byWeek[wk]=byWeek[wk]||[]).push(o); });
+
+  Object.keys(byWeek).sort((a,b)=>a-b).forEach(wk=>{
+    html += `<div class="section-label">Semana ${wk}</div>`;
+    // agrupa por data dentro da semana
+    const byDate={}; byWeek[wk].forEach(o=>(byDate[o.date]=byDate[o.date]||[]).push(o));
+    Object.keys(byDate).forEach(date=>{
+      const isToday = date===ymd(t);
+      html += `<div class="sched-day"><div class="sched-head">
+        <div class="sched-date">${fmtLong(date)} ${isToday?'<span class="chip" style="margin-left:6px">hoje</span>':''}</div></div>`;
+      byDate[date].forEach(o=>{
+        const sched=schedFor(o.key); const n=assignedCount(o.key);
+        const mineHere = me && Object.keys(sched).some(rid=>sched[rid].includes(me.id));
+        html += `<div class="sched-room" style="border-left:4px solid ${o.color}${mineHere?";background:var(--good-soft)":""}">
+          <div class="room-ico" style="background:${o.color}22;color:${o.color}">${o.type==="evento"?"🎉":"⛪"}</div>
+          <div class="sched-room-names"><div class="sched-room-title">${esc(o.title)} ${o.time?"<span class='sched-when'>• "+o.time+"</span>":""} ${mineHere?"<span class='chip good'>você</span>":""}</div>
+            ${n? n+" escalado(s)" : (leader?"Sem escala":"Aguardando escala")}</div>
+          <button class="btn btn-ghost" data-action="open-occ" data-key="${o.key}" style="padding:8px 14px;font-size:13px">${leader?(n?"Editar":"Montar"):"Ver"}</button>
         </div>`;
+        Object.keys(sched).forEach(rid=>{
+          if(!sched[rid].length) return;
+          const r=getRoom(rid); if(!r) return;
+          const people=sched[rid].map(id=>getMember(id)).filter(Boolean);
+          html += `<div style="display:flex;align-items:center;gap:10px;padding:6px 13px 6px 50px">
+            <span class="chip" style="background:${r.bg};color:${r.fg}">${r.emoji} ${esc(r.name)}</span>
+            <div class="ava-row">${people.slice(0,5).map(p=>ava(p.name,p.id)).join("")}
+              ${people.length>5?`<div class="ava-more">+${people.length-5}</div>`:""}</div>
+          </div>`;
+        });
       });
+      html += `</div>`;
     });
-    html += `</div>`;
   });
 
   c.innerHTML = html;
@@ -680,7 +730,7 @@ function renderEscala(c){
    ===================================================================== */
 let calYear, calMonth, calSelected=null;
 function renderCalendario(c){
-  document.getElementById("topActions").innerHTML =
+  if(isLeader()) document.getElementById("topActions").innerHTML =
     `<button class="icon-btn" data-action="new-event" aria-label="Novo evento">
       <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></button>`;
 
@@ -738,15 +788,15 @@ function renderCalendario(c){
         <div class="event-info"><div class="event-title">${esc(o.title)}</div>
           <div class="event-time">${o.type==="evento"?"Evento":"Culto"} ${o.time?"• "+o.time:""} • ${n} escalado(s)</div>
           ${o.note?`<div class="event-time" style="margin-top:2px">${esc(o.note)}</div>`:""}</div>
-        ${o.type==="evento"?`<button class="icon-btn sm" data-action="edit-event" data-id="${o.refId}"><svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4z"/></svg></button>`:""}
+        ${o.type==="evento"&&isLeader()?`<button class="icon-btn sm" data-action="edit-event" data-id="${o.refId}"><svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4z"/></svg></button>`:""}
       </div>`;
     });
   } else {
     html += `<p class="muted-txt" style="text-align:center;padding:14px">Nada marcado neste dia.</p>`;
   }
-  html += `<button class="btn btn-ghost btn-block" data-action="new-event-on" data-date="${calSelected}" style="margin-top:6px">
-    <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg> Adicionar evento neste dia</button>`;
   html += `</div>`;
+  if(isLeader()) html += `<button class="btn btn-ghost btn-block" data-action="new-event-on" data-date="${calSelected}" style="margin-top:6px">
+    <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg> Adicionar evento neste dia</button>`;
 
   c.innerHTML = html;
 }
@@ -756,7 +806,7 @@ function renderCalendario(c){
    ===================================================================== */
 let memberFilter = "all";
 function renderMembros(c){
-  document.getElementById("topActions").innerHTML =
+  if(isLeader()) document.getElementById("topActions").innerHTML =
     `<button class="icon-btn" data-action="new-member" aria-label="Novo membro">
       <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></button>`;
 
@@ -769,8 +819,9 @@ function renderMembros(c){
   if(memberFilter!=="all") list = list.filter(m=>m.roomIds.includes(memberFilter));
 
   if(!list.length){
-    html += emptyState("👥","Nenhuma pessoa aqui","Cadastre os voluntários do ministério para começar a montar as escalas.",
-      `<button class="btn btn-primary" data-action="new-member">Cadastrar pessoa</button>`);
+    html += emptyState("👥","Nenhuma pessoa aqui",
+      isLeader()?"Cadastre os voluntários do ministério para começar a montar as escalas.":"A equipe ainda não foi cadastrada.",
+      isLeader()?`<button class="btn btn-primary" data-action="new-member">Cadastrar pessoa</button>`:"");
     c.innerHTML = html; return;
   }
 
@@ -795,13 +846,24 @@ function renderMembros(c){
    ===================================================================== */
 function renderConfig(c){
   const me = DB.settings.meId ? getMember(DB.settings.meId) : null;
+  const leader = isLeader();
   let html = "";
+
+  // Modo de uso (papel)
+  html += `<div class="section-label">Modo de uso</div>
+    <div class="card" style="padding:6px">
+      <div class="pick" style="gap:6px">
+        <span class="pick-item ${leader?"on":""}" data-action="set-role" data-role="lider" style="flex:1;justify-content:center;${leader?"background:var(--sky-500)":""}">👑 Líder</span>
+        <span class="pick-item ${!leader?"on":""}" data-action="set-role" data-role="voluntario" style="flex:1;justify-content:center;${!leader?"background:var(--sky-500)":""}">🙋 Voluntário</span>
+      </div>
+    </div>
+    <div class="hint" style="margin:8px 4px 0">${leader?"Como líder você monta e edita escalas, equipe, salas e eventos.":"Como voluntário você acompanha as escalas e vê os seus dias, sem editar."}</div>`;
 
   // Identidade
   html += `<div class="section-label">Departamento</div>
     <div class="card" style="padding:16px">
-      <div class="field"><label>Igreja</label><input id="cfgChurch" value="${esc(DB.settings.church)}"></div>
-      <div class="field" style="margin-bottom:0"><label>Departamento</label><input id="cfgDept" value="${esc(DB.settings.dept)}"></div>
+      <div class="field"><label>Igreja</label><input id="cfgChurch" value="${esc(DB.settings.church)}" ${leader?"":"disabled"}></div>
+      <div class="field" style="margin-bottom:0"><label>Departamento</label><input id="cfgDept" value="${esc(DB.settings.dept)}" ${leader?"":"disabled"}></div>
     </div>`;
 
   // Lembretes
@@ -820,6 +882,7 @@ function renderConfig(c){
       <div class="hint" style="margin-top:8px">O calendário do celular avisa sozinho na véspera e no dia — funciona como uma notificação, mesmo com o app fechado. Refaça depois de mudar a escala.</div>
     </div>`;
 
+  if(leader){
   // Salas
   html += `<div class="section-label">Salas <span class="link" data-action="new-room">+ Nova sala</span></div>`;
   DB.rooms.forEach(r=>{
@@ -848,6 +911,7 @@ function renderConfig(c){
     </div>
     <button class="btn btn-danger btn-block" data-action="reset">Apagar tudo e recomeçar</button>
     <input type="file" id="importFile" accept="application/json" hidden>`;
+  } // fim leader
 
   // Sobre / instalar
   html += `<div class="section-label">Sobre</div>
@@ -861,17 +925,19 @@ function renderConfig(c){
 
   // autosave da identidade
   ["cfgChurch","cfgDept"].forEach(id=>{
-    const el=document.getElementById(id);
+    const el=document.getElementById(id); if(!el) return;
     el.addEventListener("change",()=>{
       DB.settings.church = document.getElementById("cfgChurch").value.trim() || "Verbo Casa Caiada";
       DB.settings.dept = document.getElementById("cfgDept").value.trim() || "Departamento Infantil";
       save(); toast("Salvo","good");
     });
   });
-  document.getElementById("cfgMe").addEventListener("change",e=>{
+  const meSel=document.getElementById("cfgMe");
+  if(meSel) meSel.addEventListener("change",e=>{
     DB.settings.meId = e.target.value; save(); toast(e.target.value?"Pronto! Vamos te lembrar.":"Removido","good");
   });
-  document.getElementById("importFile").addEventListener("change", handleImportFile);
+  const imp=document.getElementById("importFile");
+  if(imp) imp.addEventListener("change", handleImportFile);
 }
 
 /* =====================================================================
@@ -883,6 +949,10 @@ document.addEventListener("click", e=>{
   const a = el.dataset.action;
   const id = el.dataset.id;
   const key = el.dataset.key;
+
+  const LEADER_ONLY = ["new-schedule","new-member","edit-member","new-room","edit-room",
+    "new-service","edit-service","new-event","new-event-on","edit-event","export","import","reset"];
+  if(LEADER_ONLY.includes(a) && !isLeader()){ toast("Apenas líderes podem editar a escala","warn"); return; }
 
   switch(a){
     case "goto": go(el.dataset.view); break;
@@ -906,6 +976,10 @@ document.addEventListener("click", e=>{
     case "new-event-on": editEvent(null, el.dataset.date); break;
     case "edit-event": editEvent(id); break;
     case "sel-day": calSelected=el.dataset.date; go("calendario"); break;
+    case "esc-prev": escMonth--; if(escMonth<0){escMonth=11;escYear--;} go("escala"); break;
+    case "esc-next": escMonth++; if(escMonth>11){escMonth=0;escYear++;} go("escala"); break;
+    case "esc-today": { const t=today(); escYear=t.getFullYear(); escMonth=t.getMonth(); go("escala"); } break;
+    case "set-role": DB.settings.role=el.dataset.role; save(); go("config"); toast(el.dataset.role==="lider"?"Modo líder":"Modo voluntário","good"); break;
     case "cal-prev": calMonth--; if(calMonth<0){calMonth=11;calYear--;} go("calendario"); break;
     case "cal-next": calMonth++; if(calMonth>11){calMonth=0;calYear++;} go("calendario"); break;
     case "cal-today": { const t=today(); calYear=t.getFullYear(); calMonth=t.getMonth(); calSelected=ymd(t); go("calendario"); } break;
@@ -1000,7 +1074,7 @@ function openMember(mid){
       <svg viewBox="0 0 24 24"><path d="M21 11.5a8.5 8.5 0 0 1-12.6 7.4L3 21l2.2-5.3A8.5 8.5 0 1 1 21 11.5z"/></svg> Chamar no WhatsApp</button>`:""}
     <button class="btn btn-soft btn-block" data-action="ics-member" data-id="${m.id}" style="margin-bottom:8px">
       <svg viewBox="0 0 24 24"><rect x="3.5" y="4.5" width="17" height="16" rx="2.5"/><path d="M8 2.5v4M16 2.5v4M3.5 9.5h17"/></svg> Lembrete no calendário do celular</button>
-    <button class="btn btn-ghost btn-block" data-action="edit-member" data-id="${m.id}">Editar</button>`;
+    ${isLeader()?`<button class="btn btn-ghost btn-block" data-action="edit-member" data-id="${m.id}">Editar</button>`:""}`;
   openModal("Perfil", body, foot);
 }
 
@@ -1129,6 +1203,7 @@ function pickOccForSchedule(){
 function openSchedule(key){
   const occ = resolveOcc(key);
   if(!occ){ toast("Não encontrei este culto","warn"); return; }
+  if(!isLeader()){ return openScheduleReadOnly(key, occ); }
   const sched = JSON.parse(JSON.stringify(schedFor(key))); // cópia editável
 
   function renderBody(){
@@ -1183,6 +1258,33 @@ function openSchedule(key){
     DB.schedules[key]=sched; save();
     waSchedule(key, occ);
   });
+}
+
+function openScheduleReadOnly(key, occ){
+  const sched = schedFor(key);
+  const me = DB.settings.meId ? getMember(DB.settings.meId) : null;
+  const head = `<div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+    <div class="room-ico" style="width:42px;height:42px;border-radius:12px;background:${occ.color}22;color:${occ.color}">${occ.type==="evento"?"🎉":"⛪"}</div>
+    <div><div style="font-family:var(--font-display);font-weight:700;font-size:16px">${esc(occ.title)}</div>
+    <div class="muted-txt">${fmtLong(occ.date)} ${occ.time?"• "+occ.time:""}</div></div></div>`;
+
+  let body = "";
+  const rooms = DB.rooms.filter(r=>(sched[r.id]||[]).length);
+  if(!rooms.length){ body = `<p class="muted-txt" style="text-align:center;padding:20px">Escala ainda não definida pelo líder.</p>`; }
+  else rooms.forEach(r=>{
+    const people=(sched[r.id]||[]).map(id=>getMember(id)).filter(Boolean);
+    const mineHere = me && people.some(p=>p.id===me.id);
+    body += `<div class="card" style="padding:13px;margin-bottom:11px${mineHere?";border-color:#BFE9D7;background:var(--good-soft)":""}">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+        <div class="room-ico" style="width:34px;height:34px;border-radius:10px;font-size:16px;background:${r.bg};color:${r.fg}">${r.emoji}</div>
+        <div class="room-name" style="font-size:14.5px">${esc(r.name)} ${mineHere?"<span class='chip good'>você</span>":""}</div>
+      </div>
+      <div class="pick">${people.map(p=>`<span class="chip ${me&&p.id===me.id?"good":""}">${ava(p.name,p.id,"width:22px;height:22px;font-size:10px;margin-right:4px")}${esc(p.name)}</span>`).join("")}</div>
+    </div>`;
+  });
+
+  openModal("Escala do culto", head+body,
+    me ? `<button class="btn btn-ghost btn-block" data-action="ics-me"><svg viewBox="0 0 24 24"><rect x="3.5" y="4.5" width="17" height="16" rx="2.5"/><path d="M8 2.5v4M16 2.5v4M3.5 9.5h17"/></svg> Pôr meus dias no calendário</button>` : "");
 }
 
 function resolveOcc(key){
