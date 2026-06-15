@@ -11,6 +11,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <!-- Supabase JS (só age quando você preencher URL/chave no app.js) -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <link rel="icon" type="image/png" href="data:image/png;base64,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" />
   <link rel="apple-touch-icon" href="data:image/png;base64,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" />
   <style>
@@ -347,10 +349,51 @@ h1,h2,h3{font-family:var(--font-display);font-weight:700;margin:0;color:var(--in
   *{animation-duration:.01ms !important;transition-duration:.01ms !important}
 }
 
+/* ---------- Login ---------- */
+.login{position:fixed;inset:0;z-index:100;display:flex;align-items:center;justify-content:center;
+  padding:24px;background:
+    radial-gradient(900px 500px at 50% -10%, var(--sky-200), transparent 60%),
+    linear-gradient(180deg, var(--sky-100), var(--paper) 60%)}
+.login[hidden]{display:none}
+.login-card{width:100%;max-width:380px;background:var(--card);border:1px solid var(--line);
+  border-radius:var(--r-xl);box-shadow:var(--shadow-lg);padding:30px 26px;text-align:center;
+  animation:slideUp .35s cubic-bezier(.2,.9,.3,1) both}
+.login-logo{width:84px;height:84px;border-radius:24px;object-fit:contain;background:#fff;
+  box-shadow:var(--shadow-md);margin:0 auto 14px;display:block;border:1px solid var(--line)}
+.login-card h1{font-size:23px;margin-bottom:2px}
+.login-sub{color:var(--ink-soft);font-size:13.5px;margin:0 0 22px}
+.login .field{text-align:left}
+.login-btn-wrap{margin-top:6px}
+.login-err{color:var(--danger);font-size:13px;font-weight:600;margin-top:12px;min-height:18px}
+.login-note{margin-top:18px;font-size:11.5px;color:var(--ink-faint);line-height:1.5;
+  background:var(--sky-50);border-radius:12px;padding:10px 12px}
+.login-note b{color:var(--ink-soft)}
+.logged-as{display:flex;align-items:center;gap:10px;padding:13px 14px;background:var(--sky-50);border-radius:13px;margin-bottom:10px}
+.logged-as .ava{width:38px;height:38px}
+.logged-as .person-name{font-size:14px}
+
   </style>
 </head>
 <body>
-  <div id="app">
+  <!-- Tela de login (some quando autenticado) -->
+  <div id="login" class="login" hidden>
+    <div class="login-card">
+      <img class="login-logo" src="data:image/png;base64,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" alt="Crianças Verbo da Vida" />
+      <h1>Escala Kids</h1>
+      <p class="login-sub">Acesso da liderança</p>
+      <div class="field"><label>E-mail</label>
+        <input id="loginEmail" type="email" inputmode="email" autocomplete="username" placeholder="voce@email.com" /></div>
+      <div class="field"><label>Senha</label>
+        <input id="loginPass" type="password" autocomplete="current-password" placeholder="••••••••" /></div>
+      <div class="login-btn-wrap">
+        <button id="loginBtn" class="btn btn-primary btn-block">Entrar</button>
+      </div>
+      <div id="loginErr" class="login-err"></div>
+      <div id="loginNote" class="login-note"></div>
+    </div>
+  </div>
+
+  <div id="app" hidden>
     <!-- Topo -->
     <header class="topbar" id="topbar">
       <div class="topbar-inner">
@@ -412,6 +455,86 @@ h1,h2,h3{font-family:var(--font-display);font-weight:700;margin:0;color:var(--in
    App de escala do departamento infantil (PWA, offline, local)
    =========================================================== */
 
+/* ===========================================================
+   >>> INTEGRAÇÃO SUPABASE — preencha aqui <<<
+   1. Crie um projeto em supabase.com e rode o supabase-schema.sql.
+   2. Cole a URL e a anon key abaixo.
+   3. Pronto: o login passa a usar o Supabase Auth e só entra quem
+      tiver role 'leader'/'admin' na tabela profiles.
+   Enquanto estiver em branco, o app roda em "modo de teste" local.
+   =========================================================== */
+const SUPABASE_URL = "";        // ex.: "https://xxxx.supabase.co"
+const SUPABASE_ANON_KEY = "";   // ex.: "eyJhbGciOi..."
+const USE_SUPABASE = !!(SUPABASE_URL && SUPABASE_ANON_KEY && window.supabase);
+const sb = USE_SUPABASE ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
+
+/* Camada de autenticação. Troque o "modo local" pelas chamadas reais quando
+   conectar o Supabase — os pontos estão marcados com  // === SUPABASE === */
+const Auth = {
+  user:null, role:null,
+
+  async init(){
+    if(USE_SUPABASE){
+      // === SUPABASE: recupera a sessão salva ===
+      const { data } = await sb.auth.getSession();
+      if(data && data.session){ await this.loadProfile(data.session.user); }
+      sb.auth.onAuthStateChange((_evt, session)=>{
+        if(!session){ this.user=null; this.role=null; showLogin(); }
+      });
+    } else {
+      // modo de teste local (sem Supabase configurado)
+      const saved = localStorage.getItem("escala-kids-localauth");
+      if(saved){ this.user = { email: saved }; this.role = "leader"; }
+    }
+  },
+
+  async loadProfile(user){
+    // === SUPABASE: lê o papel do usuário na tabela profiles ===
+    let role = "volunteer";
+    try{
+      const { data } = await sb.from("profiles").select("role").eq("id", user.id).single();
+      if(data && data.role) role = data.role;
+    }catch(e){}
+    this.user = user; this.role = role;
+    return role;
+  },
+
+  async signIn(email, password){
+    if(USE_SUPABASE){
+      // === SUPABASE: login com e-mail/senha ===
+      const { data, error } = await sb.auth.signInWithPassword({ email, password });
+      if(error) throw new Error(traduzErroAuth(error.message));
+      const role = await this.loadProfile(data.user);
+      if(role!=="leader" && role!=="admin"){
+        await this.signOut();
+        throw new Error("Acesso liberado apenas para líderes no momento.");
+      }
+      return true;
+    } else {
+      // modo de teste: aceita qualquer e-mail como líder, só para você testar
+      if(!email){ throw new Error("Digite um e-mail."); }
+      this.user = { email }; this.role = "leader";
+      localStorage.setItem("escala-kids-localauth", email);
+      return true;
+    }
+  },
+
+  async signOut(){
+    if(USE_SUPABASE){ try{ await sb.auth.signOut(); }catch(e){} }
+    else localStorage.removeItem("escala-kids-localauth");
+    this.user=null; this.role=null;
+  },
+
+  isLeader(){ return this.role==="leader" || this.role==="admin"; },
+  email(){ return this.user ? (this.user.email||"") : ""; }
+};
+
+function traduzErroAuth(msg){
+  if(/invalid login credentials/i.test(msg)) return "E-mail ou senha incorretos.";
+  if(/email not confirmed/i.test(msg)) return "Confirme seu e-mail antes de entrar.";
+  return msg;
+}
+
 /* ---------------- Persistência ---------------- */
 const STORE_KEY = "escala-kids-v1";
 let DB = load();
@@ -419,11 +542,30 @@ let DB = load();
 function load(){
   try{
     const raw = localStorage.getItem(STORE_KEY);
-    if(raw) return JSON.parse(raw);
+    if(raw) return migrate(JSON.parse(raw));
   }catch(e){}
   const fresh = seed();
   try{ localStorage.setItem(STORE_KEY, JSON.stringify(fresh)); }catch(e){}
   return fresh;
+}
+
+/* Normaliza a escala para o formato { lider, monitores[] } (máx 1+2 por sala) */
+function migrate(db){
+  if(db && db.schedules){
+    for(const k in db.schedules){
+      const rooms = db.schedules[k];
+      for(const rid in rooms){
+        const v = rooms[rid];
+        if(Array.isArray(v)){
+          rooms[rid] = { lider: v[0]||null, monitores: v.slice(1,3) };
+        } else if(v && typeof v==="object"){
+          rooms[rid] = { lider: v.lider||null, monitores: (v.monitores||[]).slice(0,2) };
+        }
+      }
+    }
+  }
+  if(db && db.settings && !db.settings.role) db.settings.role = "lider";
+  return db;
 }
 function save(){
   try{ localStorage.setItem(STORE_KEY, JSON.stringify(DB)); }catch(e){
@@ -500,10 +642,31 @@ function upcomingOccs(days=21){
   return out;
 }
 function schedFor(key){ return DB.schedules[key] || {}; }
-function assignedCount(key){ const s=schedFor(key); return Object.values(s).reduce((a,arr)=>a+arr.length,0); }
 
-/* Papel do usuário (escaffolding p/ Supabase: aqui é só modo de visualização) */
-function isLeader(){ return (DB.settings.role||"lider")!=="voluntario"; }
+/* Slot de uma sala: 1 líder + até 2 monitores (máx 3) */
+function roomSlot(key, roomId){
+  const v = schedFor(key)[roomId];
+  if(!v) return { lider:null, monitores:[] };
+  if(Array.isArray(v)) return { lider:v[0]||null, monitores:v.slice(1,3) };
+  return { lider:v.lider||null, monitores:(v.monitores||[]).slice(0,2) };
+}
+function roomPeopleIds(key, roomId){ const s=roomSlot(key,roomId); return [s.lider, ...s.monitores].filter(Boolean); }
+function assignedCount(key){ const s=schedFor(key); return Object.keys(s).reduce((a,rid)=>a+roomPeopleIds(key,rid).length,0); }
+function occHasMember(key, mid){ const s=schedFor(key); return Object.keys(s).some(rid=>roomPeopleIds(key,rid).includes(mid)); }
+function memberRoleInRoom(key, roomId, mid){
+  const s=roomSlot(key,roomId);
+  if(s.lider===mid) return "Líder da sala";
+  if(s.monitores.includes(mid)) return "Monitor";
+  return null;
+}
+
+/* Papel: o login só deixa líder entrar. O toggle em "Mais" permite pré-visualizar
+   a experiência do voluntário. Quando você integrar voluntários ao login,
+   troque por: return Auth.isLeader() && DB.settings.role!=="voluntario"; */
+function isLeader(){
+  if((DB.settings.role||"lider")==="voluntario") return false;   // pré-visualização
+  return Auth.role ? Auth.isLeader() : true;                      // autenticado respeita o papel
+}
 
 /* Todas as ocorrências dentro de um mês do calendário */
 function occsInMonth(y,m){
@@ -513,8 +676,7 @@ function occsInMonth(y,m){
 }
 /* Ocorrências em que um membro está escalado dentro de um mês */
 function myOccsInMonth(mid,y,m){
-  return occsInMonth(y,m).filter(o=>{ const s=schedFor(o.key);
-    return Object.keys(s).some(rid=>s[rid].includes(mid)); });
+  return occsInMonth(y,m).filter(o=>occHasMember(o.key, mid));
 }
 
 /* ---------------- Roteador ---------------- */
@@ -565,14 +727,15 @@ function renderHome(c){
   // "Você" escalado hoje
   if(me){
     const minhasSalas = occs.flatMap(o=>{ const s=schedFor(o.key);
-      return Object.keys(s).filter(rid=>s[rid].includes(me.id)).map(rid=>({occ:o,room:getRoom(rid)})); });
+      return Object.keys(s).filter(rid=>roomPeopleIds(o.key,rid).includes(me.id))
+        .map(rid=>({occ:o,room:getRoom(rid),role:memberRoleInRoom(o.key,rid,me.id)})); });
     if(minhasSalas.length){
       html += `<div class="today" style="background:linear-gradient(135deg,#fff,var(--good-soft));border-color:#BFE9D7;margin-bottom:14px">
         <div class="today-date"><div class="today-sun" style="background:var(--good-soft);color:#1F8A63">
           <svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></div>
           <div><div class="today-day">É o seu dia, ${esc(me.name.split(" ")[0])}!</div>
           <div class="today-sub">Você está escalado hoje</div></div></div>
-        ${minhasSalas.map(x=>`<div class="today-event" style="color:#1F8A63">${esc(x.occ.title)} • ${esc(x.room?x.room.name:"—")} ${x.occ.time?"• "+x.occ.time:""}</div>`).join("")}
+        ${minhasSalas.map(x=>`<div class="today-event" style="color:#1F8A63">${esc(x.occ.title)} • ${esc(x.room?x.room.name:"—")}${x.role?" • "+x.role:""} ${x.occ.time?"• "+x.occ.time:""}</div>`).join("")}
       </div>`;
     }
   }
@@ -609,7 +772,7 @@ function renderHome(c){
   if(up.length){
     up.forEach(o=>{
       const n = assignedCount(o.key);
-      const status = n>=4 ? `<span class="dot"></span>` : n>0 ? `<span class="dot low"></span>` : `<span class="dot empty"></span>`;
+      const status = n>0 ? `<span class="dot"></span>` : `<span class="dot empty"></span>`;
       html += `<div class="room list-tap" data-action="open-occ" data-key="${o.key}">
         <div class="room-ico" style="background:${o.color}22;color:${o.color}">${o.type==="evento"?"🎉":"⛪"}</div>
         <div class="room-info"><div class="room-name">${esc(o.title)}</div>
@@ -700,7 +863,7 @@ function renderEscala(c){
         <div class="sched-date">${fmtLong(date)} ${isToday?'<span class="chip" style="margin-left:6px">hoje</span>':''}</div></div>`;
       byDate[date].forEach(o=>{
         const sched=schedFor(o.key); const n=assignedCount(o.key);
-        const mineHere = me && Object.keys(sched).some(rid=>sched[rid].includes(me.id));
+        const mineHere = me && occHasMember(o.key, me.id);
         html += `<div class="sched-room" style="border-left:4px solid ${o.color}${mineHere?";background:var(--good-soft)":""}">
           <div class="room-ico" style="background:${o.color}22;color:${o.color}">${o.type==="evento"?"🎉":"⛪"}</div>
           <div class="sched-room-names"><div class="sched-room-title">${esc(o.title)} ${o.time?"<span class='sched-when'>• "+o.time+"</span>":""} ${mineHere?"<span class='chip good'>você</span>":""}</div>
@@ -708,13 +871,14 @@ function renderEscala(c){
           <button class="btn btn-ghost" data-action="open-occ" data-key="${o.key}" style="padding:8px 14px;font-size:13px">${leader?(n?"Editar":"Montar"):"Ver"}</button>
         </div>`;
         Object.keys(sched).forEach(rid=>{
-          if(!sched[rid].length) return;
+          const ids=roomPeopleIds(o.key,rid);
+          if(!ids.length) return;
           const r=getRoom(rid); if(!r) return;
-          const people=sched[rid].map(id=>getMember(id)).filter(Boolean);
+          const slot=roomSlot(o.key,rid);
+          const ordered=[slot.lider,...slot.monitores].filter(Boolean).map(id=>getMember(id)).filter(Boolean);
           html += `<div style="display:flex;align-items:center;gap:10px;padding:6px 13px 6px 50px">
             <span class="chip" style="background:${r.bg};color:${r.fg}">${r.emoji} ${esc(r.name)}</span>
-            <div class="ava-row">${people.slice(0,5).map(p=>ava(p.name,p.id)).join("")}
-              ${people.length>5?`<div class="ava-more">+${people.length-5}</div>`:""}</div>
+            <div class="ava-row">${ordered.map((p,i)=>ava(p.name,p.id,i===0&&slot.lider?"box-shadow:0 0 0 2px var(--sun)":"")).join("")}</div>
           </div>`;
         });
       });
@@ -888,7 +1052,7 @@ function renderConfig(c){
   DB.rooms.forEach(r=>{
     html += `<div class="room list-tap" data-action="edit-room" data-id="${r.id}">
       <div class="room-ico" style="background:${r.bg};color:${r.fg}">${r.emoji}</div>
-      <div class="room-info"><div class="room-name">${esc(r.name)}</div><div class="room-age">${esc(r.age)} • precisa de ${r.need}</div></div>
+      <div class="room-info"><div class="room-name">${esc(r.name)}</div><div class="room-age">${esc(r.age)} • 1 líder + 2 monitores</div></div>
       <svg viewBox="0 0 24 24" style="width:18px;height:18px;fill:none;stroke:var(--ink-faint);stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><path d="M9 18l6-6-6-6"/></svg>
     </div>`;
   });
@@ -912,6 +1076,16 @@ function renderConfig(c){
     <button class="btn btn-danger btn-block" data-action="reset">Apagar tudo e recomeçar</button>
     <input type="file" id="importFile" accept="application/json" hidden>`;
   } // fim leader
+
+  // Conta
+  html += `<div class="section-label">Conta</div>
+    <div class="logged-as">
+      <div class="ava" style="background:var(--sky-500)">${esc((Auth.email()||"L")[0].toUpperCase())}</div>
+      <div class="person-info"><div class="person-name">${esc(Auth.email()||"Líder")}</div>
+        <div class="person-meta">${USE_SUPABASE?"Conectado ao Supabase":"Modo de teste local"}</div></div>
+    </div>
+    <button class="btn btn-soft btn-block" data-action="logout">
+      <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5M21 12H9"/></svg> Sair</button>`;
 
   // Sobre / instalar
   html += `<div class="section-label">Sobre</div>
@@ -980,6 +1154,7 @@ document.addEventListener("click", e=>{
     case "esc-next": escMonth++; if(escMonth>11){escMonth=0;escYear++;} go("escala"); break;
     case "esc-today": { const t=today(); escYear=t.getFullYear(); escMonth=t.getMonth(); go("escala"); } break;
     case "set-role": DB.settings.role=el.dataset.role; save(); go("config"); toast(el.dataset.role==="lider"?"Modo líder":"Modo voluntário","good"); break;
+    case "logout": doLogout(); break;
     case "cal-prev": calMonth--; if(calMonth<0){calMonth=11;calYear--;} go("calendario"); break;
     case "cal-next": calMonth++; if(calMonth>11){calMonth=0;calYear++;} go("calendario"); break;
     case "cal-today": { const t=today(); calYear=t.getFullYear(); calMonth=t.getMonth(); calSelected=ymd(t); go("calendario"); } break;
@@ -1047,7 +1222,11 @@ function editMember(mid){
   if(mid) document.getElementById("mDelete").addEventListener("click", ()=>{
     if(!confirm("Excluir esta pessoa? Ela sairá das escalas futuras.")) return;
     DB.members = DB.members.filter(x=>x.id!==mid);
-    Object.values(DB.schedules).forEach(s=>Object.keys(s).forEach(rid=>{ s[rid]=s[rid].filter(x=>x!==mid); }));
+    Object.values(DB.schedules).forEach(s=>Object.keys(s).forEach(rid=>{
+      const v=s[rid];
+      if(Array.isArray(v)){ s[rid]=v.filter(x=>x!==mid); }
+      else if(v&&typeof v==="object"){ if(v.lider===mid) v.lider=null; v.monitores=(v.monitores||[]).filter(x=>x!==mid); }
+    }));
     if(DB.settings.meId===mid) DB.settings.meId="";
     save(); closeModal(); go("membros"); toast("Pessoa removida","good");
   });
@@ -1085,9 +1264,10 @@ function editRoom(rid){
   const r = rid ? getRoom(rid) : {name:"",age:"",emoji:"⭐",bg:ROOM_COLORS[0][0],fg:ROOM_COLORS[0][1],need:2};
   const body = `
     <div class="field"><label>Nome da sala</label><input id="rName" value="${esc(r.name)}" placeholder="Ex.: Berçário"></div>
-    <div class="row2">
-      <div class="field"><label>Faixa etária</label><input id="rAge" value="${esc(r.age)}" placeholder="0 a 1 ano"></div>
-      <div class="field"><label>Voluntários necessários</label><input id="rNeed" type="number" min="1" max="20" value="${r.need}"></div>
+    <div class="field"><label>Faixa etária</label><input id="rAge" value="${esc(r.age)}" placeholder="0 a 1 ano"></div>
+    <div class="banner" style="background:var(--sky-50);border-color:var(--sky-200);margin-bottom:14px">
+      <svg viewBox="0 0 24 24" style="color:var(--sky-600)"><path d="M16 11a4 4 0 1 0-8 0"/><circle cx="12" cy="7" r="0"/><path d="M3 21v-1a5 5 0 0 1 5-5h8a5 5 0 0 1 5 5v1"/></svg>
+      <div class="banner-txt" style="color:var(--ink-soft)">Cada sala tem no máximo <b style="color:var(--ink)">3 pessoas</b>: 1 líder da sala + 2 monitores.</div>
     </div>
     <div class="field"><label>Ícone</label>
       <div class="pick" id="rEmoji">${EMOJIS.map(em=>`<span class="pick-item ${r.emoji===em?"on":""}" data-em="${em}" style="font-size:18px;${r.emoji===em?"background:var(--sky-500)":""}">${em}</span>`).join("")}</div></div>
@@ -1110,7 +1290,7 @@ function editRoom(rid){
     const name=document.getElementById("rName").value.trim();
     if(!name){ toast("Dê um nome para a sala","warn"); return; }
     const data={ name, age:document.getElementById("rAge").value.trim(),
-      need:Math.max(1,parseInt(document.getElementById("rNeed").value)||1), emoji:em, bg, fg };
+      need:3, emoji:em, bg, fg };
     if(rid) Object.assign(getRoom(rid),data); else DB.rooms.push({id:uid(),...data});
     save(); closeModal(); go(currentView==="config"?"config":"home"); toast(rid?"Sala atualizada":"Sala criada","good");
   });
@@ -1204,24 +1384,35 @@ function openSchedule(key){
   const occ = resolveOcc(key);
   if(!occ){ toast("Não encontrei este culto","warn"); return; }
   if(!isLeader()){ return openScheduleReadOnly(key, occ); }
-  const sched = JSON.parse(JSON.stringify(schedFor(key))); // cópia editável
+
+  // cópia editável já no formato {lider, monitores[]}
+  const sched={};
+  DB.rooms.forEach(r=>{ const sl=roomSlot(key,r.id); sched[r.id]={lider:sl.lider, monitores:[...sl.monitores]}; });
+
+  const shortName=m=>esc(m.name.split(" ")[0])+(m.name.split(" ")[1]?" "+m.name.split(" ")[1][0]+".":"");
+  function availFor(r){ return DB.members.filter(m=>m.active).filter(m=>!m.roomIds.length||m.roomIds.includes(r.id)).sort((a,b)=>a.name.localeCompare(b.name,"pt")); }
 
   function renderBody(){
     return DB.rooms.map(r=>{
-      const assigned = sched[r.id]||[];
-      const enough = assigned.length>=r.need;
+      const slot=sched[r.id];
+      const count=(slot.lider?1:0)+slot.monitores.length;
+      const avail=availFor(r);
+      const liderG = avail.length ? avail.map(m=>{ const on=slot.lider===m.id;
+          return `<span class="pick-item ${on?"on":""}" data-mid="${m.id}" style="${on?`background:${r.fg}`:""}">${on?"👑 ":""}${shortName(m)}</span>`; }).join("")
+        : '<span class="muted-txt">Ninguém apto a esta sala</span>';
+      const monG = avail.length ? avail.map(m=>{ const on=slot.monitores.includes(m.id);
+          return `<span class="pick-item ${on?"on":""}" data-mid="${m.id}" style="${on?`background:${r.fg}`:""}">${shortName(m)}</span>`; }).join("")
+        : '<span class="muted-txt">Ninguém apto a esta sala</span>';
       return `<div class="card" style="padding:13px;margin-bottom:11px">
-        <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
           <div class="room-ico" style="width:38px;height:38px;border-radius:11px;font-size:18px;background:${r.bg};color:${r.fg}">${r.emoji}</div>
           <div style="flex:1"><div class="room-name" style="font-size:14.5px">${esc(r.name)}</div>
-            <div class="room-age">${assigned.length}/${r.need} ${enough?"✓":""}</div></div>
+            <div class="room-age">${count}/3 ${count===3?"✓":""}</div></div>
         </div>
-        <div class="pick" data-room-pick="${r.id}">
-          ${DB.members.filter(m=>m.active).filter(m=>m.roomIds.length===0||m.roomIds.includes(r.id)).sort((a,b)=>a.name.localeCompare(b.name,"pt"))
-            .map(m=>{ const on=assigned.includes(m.id);
-              return `<span class="pick-item ${on?"on":""}" data-mid="${m.id}" style="${on?`background:${r.fg}`:""}">${esc(m.name.split(" ")[0])}${m.name.split(" ")[1]?" "+m.name.split(" ")[1][0]+".":""}</span>`;
-            }).join("") || '<span class="muted-txt">Ninguém apto a esta sala</span>'}
-        </div>
+        <div style="font-size:12px;font-weight:700;color:var(--ink-soft);margin:8px 0 6px">👑 Líder da sala</div>
+        <div class="pick" data-grp="lider" data-room="${r.id}">${liderG}</div>
+        <div style="font-size:12px;font-weight:700;color:var(--ink-soft);margin:12px 0 6px">Monitores <span style="font-weight:500">(até 2)</span></div>
+        <div class="pick" data-grp="monitor" data-room="${r.id}">${monG}</div>
       </div>`;
     }).join("");
   }
@@ -1236,28 +1427,35 @@ function openSchedule(key){
        <svg viewBox="0 0 24 24"><path d="M21 11.5a8.5 8.5 0 0 1-12.6 7.4L3 21l2.2-5.3A8.5 8.5 0 1 1 21 11.5z"/></svg> Avisar escalados no WhatsApp</button>
      <button class="btn btn-primary btn-block" id="schedSave">Salvar escala</button>`);
 
-  document.getElementById("schedRooms").addEventListener("click", e=>{
-    const it=e.target.closest(".pick-item"); if(!it) return;
-    const wrap=it.closest("[data-room-pick]"); const rid=wrap.dataset.roomPick; const mid=it.dataset.mid;
-    const r=getRoom(rid); sched[rid]=sched[rid]||[];
-    if(sched[rid].includes(mid)){ sched[rid]=sched[rid].filter(x=>x!==mid); it.classList.remove("on"); it.style.background=""; }
-    else{ sched[rid].push(mid); it.classList.add("on"); it.style.background=r.fg; }
-    // atualiza contador
-    const head=wrap.previousElementSibling.querySelector(".room-age");
-    if(head) head.textContent = `${sched[rid].length}/${r.need} ${sched[rid].length>=r.need?"✓":""}`;
+  const wrap=document.getElementById("schedRooms");
+  function paint(){ wrap.innerHTML=renderBody(); }
+  wrap.addEventListener("click", e=>{
+    const it=e.target.closest(".pick-item[data-mid]"); if(!it) return;
+    const grpEl=it.closest("[data-grp]"); if(!grpEl) return;
+    const grp=grpEl.dataset.grp, rid=grpEl.dataset.room, mid=it.dataset.mid;
+    const slot=sched[rid];
+    if(grp==="lider"){
+      if(slot.lider===mid) slot.lider=null;
+      else { slot.lider=mid; slot.monitores=slot.monitores.filter(x=>x!==mid); }
+    } else {
+      if(slot.monitores.includes(mid)) slot.monitores=slot.monitores.filter(x=>x!==mid);
+      else {
+        if(slot.lider===mid) slot.lider=null;
+        if(slot.monitores.length>=2){ toast("Máximo de 2 monitores por sala","warn"); return; }
+        slot.monitores.push(mid);
+      }
+    }
+    paint();
   });
 
-  document.getElementById("schedSave").addEventListener("click",()=>{
-    Object.keys(sched).forEach(rid=>{ if(!sched[rid].length) delete sched[rid]; });
-    DB.schedules[key]=sched; save(); closeModal(); go(currentView); toast("Escala salva","good");
-  });
-
-  document.getElementById("schedWa").addEventListener("click",()=>{
-    // salva antes de avisar
-    Object.keys(sched).forEach(rid=>{ if(!sched[rid].length) delete sched[rid]; });
+  function commit(){
+    Object.keys(sched).forEach(rid=>{ const s=sched[rid]; if(!s.lider && !s.monitores.length) delete sched[rid]; });
     DB.schedules[key]=sched; save();
-    waSchedule(key, occ);
+  }
+  document.getElementById("schedSave").addEventListener("click",()=>{
+    commit(); closeModal(); go(currentView); toast("Escala salva","good");
   });
+  document.getElementById("schedWa").addEventListener("click",()=>{ commit(); waSchedule(key, occ); });
 }
 
 function openScheduleReadOnly(key, occ){
@@ -1269,17 +1467,22 @@ function openScheduleReadOnly(key, occ){
     <div class="muted-txt">${fmtLong(occ.date)} ${occ.time?"• "+occ.time:""}</div></div></div>`;
 
   let body = "";
-  const rooms = DB.rooms.filter(r=>(sched[r.id]||[]).length);
+  const rooms = DB.rooms.filter(r=>roomPeopleIds(key,r.id).length);
   if(!rooms.length){ body = `<p class="muted-txt" style="text-align:center;padding:20px">Escala ainda não definida pelo líder.</p>`; }
   else rooms.forEach(r=>{
-    const people=(sched[r.id]||[]).map(id=>getMember(id)).filter(Boolean);
-    const mineHere = me && people.some(p=>p.id===me.id);
+    const slot=roomSlot(key,r.id);
+    const mineHere = me && roomPeopleIds(key,r.id).includes(me.id);
+    const chip=(id,isLeader)=>{ const p=getMember(id); if(!p) return "";
+      return `<span class="chip ${me&&id===me.id?"good":""}" style="margin:2px 4px 2px 0">${ava(p.name,p.id,"width:22px;height:22px;font-size:10px;margin-right:4px")}${isLeader?"👑 ":""}${esc(p.name)}</span>`; };
     body += `<div class="card" style="padding:13px;margin-bottom:11px${mineHere?";border-color:#BFE9D7;background:var(--good-soft)":""}">
       <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
         <div class="room-ico" style="width:34px;height:34px;border-radius:10px;font-size:16px;background:${r.bg};color:${r.fg}">${r.emoji}</div>
         <div class="room-name" style="font-size:14.5px">${esc(r.name)} ${mineHere?"<span class='chip good'>você</span>":""}</div>
       </div>
-      <div class="pick">${people.map(p=>`<span class="chip ${me&&p.id===me.id?"good":""}">${ava(p.name,p.id,"width:22px;height:22px;font-size:10px;margin-right:4px")}${esc(p.name)}</span>`).join("")}</div>
+      <div style="font-size:11.5px;font-weight:700;color:var(--ink-faint);margin-bottom:3px">LÍDER DA SALA</div>
+      <div>${slot.lider?chip(slot.lider,true):'<span class="muted-txt" style="font-size:12.5px">—</span>'}</div>
+      <div style="font-size:11.5px;font-weight:700;color:var(--ink-faint);margin:8px 0 3px">MONITORES</div>
+      <div>${slot.monitores.length?slot.monitores.map(id=>chip(id,false)).join(""):'<span class="muted-txt" style="font-size:12.5px">—</span>'}</div>
     </div>`;
   });
 
@@ -1307,14 +1510,16 @@ function waMember(mid){
 function waSchedule(key, occ){
   const sched=schedFor(key);
   const people=[];
-  Object.keys(sched).forEach(rid=>{ const r=getRoom(rid);
-    sched[rid].forEach(mid=>{ const m=getMember(mid); if(m&&m.phone) people.push({m,r}); }); });
+  Object.keys(sched).forEach(rid=>{ const r=getRoom(rid); if(!r) return;
+    const slot=roomSlot(key,rid);
+    [slot.lider, ...slot.monitores].filter(Boolean).forEach(mid=>{
+      const m=getMember(mid); if(m&&m.phone) people.push({m,r,role:memberRoleInRoom(key,rid,mid)}); });
+  });
   if(!people.length){ toast("Ninguém com WhatsApp nesta escala","warn"); return; }
-  // modal com botões por pessoa
   const body = `<p class="muted-txt" style="margin:0 0 12px">Toque para abrir o WhatsApp de cada pessoa com a mensagem pronta.</p>
-    ${people.map(({m,r})=>`<div class="person">
+    ${people.map(({m,r,role})=>`<div class="person">
       ${ava(m.name,m.id)}
-      <div class="person-info"><div class="person-name">${esc(m.name)}</div><div class="person-meta">${r.emoji} ${esc(r.name)}</div></div>
+      <div class="person-info"><div class="person-name">${esc(m.name)}</div><div class="person-meta">${r.emoji} ${esc(r.name)} • ${role}</div></div>
       <button class="btn btn-wa" data-wa-one="${m.id}" data-room="${r.id}" style="padding:9px 13px;font-size:13px">
         <svg viewBox="0 0 24 24"><path d="M21 11.5a8.5 8.5 0 0 1-12.6 7.4L3 21l2.2-5.3A8.5 8.5 0 1 1 21 11.5z"/></svg> Avisar</button>
     </div>`).join("")}`;
@@ -1322,7 +1527,8 @@ function waSchedule(key, occ){
   document.getElementById("modalBody").querySelectorAll("[data-wa-one]").forEach(btn=>{
     btn.addEventListener("click",()=>{
       const m=getMember(btn.dataset.waOne); const r=getRoom(btn.dataset.room);
-      const msg = `Oi ${m.name.split(" ")[0]}! 💙 Lembrete da escala do ${DB.settings.dept}:\n\n📅 ${fmtLong(occ.date)}\n⛪ ${occ.title}${occ.time?" às "+occ.time:""}\n🚪 Sala: ${r.name}\n\nConto com você! Deus abençoe.`;
+      const role=memberRoleInRoom(key, btn.dataset.room, btn.dataset.waOne)||"Voluntário";
+      const msg = `Oi ${m.name.split(" ")[0]}! 💙 Lembrete da escala do ${DB.settings.dept}:\n\n📅 ${fmtLong(occ.date)}\n⛪ ${occ.title}${occ.time?" às "+occ.time:""}\n🚪 Sala: ${r.name}\n🙋 Função: ${role}\n\nConto com você! Deus abençoe.`;
       window.open(`https://wa.me/${cleanPhone(m.phone)}?text=${encodeURIComponent(msg)}`,"_blank");
     });
   });
@@ -1341,9 +1547,10 @@ function icsForMember(mid, days=60){
   let count=0;
   occs.forEach(o=>{
     const s=schedFor(o.key);
-    const rids=Object.keys(s).filter(rid=>s[rid].includes(mid));
+    const rids=Object.keys(s).filter(rid=>roomPeopleIds(o.key,rid).includes(mid));
     if(!rids.length) return;
-    const roomNames=rids.map(rid=>{const r=getRoom(rid);return r?r.name:"";}).filter(Boolean).join(", ");
+    const partes=rids.map(rid=>{ const r=getRoom(rid); const role=memberRoleInRoom(o.key,rid,mid);
+      return r?`${r.name} (${role})`:""; }).filter(Boolean).join(", ");
     const [Y,Mo,Da]=o.date.split("-");
     const t=(o.time||"09:00").split(":");
     const hh=String(t[0]).padStart(2,"0"), mm=String(t[1]||"00").padStart(2,"0");
@@ -1354,8 +1561,8 @@ function icsForMember(mid, days=60){
     L.push("BEGIN:VEVENT",
       `UID:${o.key.replace(/[^a-z0-9]/gi,"")}-${mid}@escalakids`,
       `DTSTAMP:${stamp}`, `DTSTART:${start}`, `DTEND:${end}`,
-      `SUMMARY:${icsEsc("Escala Kids — "+roomNames)}`,
-      `DESCRIPTION:${icsEsc(o.title+(o.time?" às "+o.time:"")+" • Sala: "+roomNames+" • "+DB.settings.church)}`,
+      `SUMMARY:${icsEsc("Escala Kids — "+partes)}`,
+      `DESCRIPTION:${icsEsc(o.title+(o.time?" às "+o.time:"")+" • "+partes+" • "+DB.settings.church)}`,
       "BEGIN:VALARM","ACTION:DISPLAY","DESCRIPTION:Hoje você está escalado no Kids 💙","TRIGGER:-PT2H","END:VALARM",
       "BEGIN:VALARM","ACTION:DISPLAY","DESCRIPTION:Lembrete: você está escalado no Kids","TRIGGER:-PT15H","END:VALARM",
       "END:VEVENT");
@@ -1396,7 +1603,8 @@ function checkTodayReminder(force){
   const occs=occsOnDate(ymd(today()));
   const mine=[];
   occs.forEach(o=>{ const s=schedFor(o.key);
-    Object.keys(s).forEach(rid=>{ if(s[rid].includes(me.id)){ const r=getRoom(rid); mine.push(`${o.title} • ${r?r.name:""}`); } }); });
+    Object.keys(s).forEach(rid=>{ if(roomPeopleIds(o.key,rid).includes(me.id)){ const r=getRoom(rid);
+      mine.push(`${o.title} • ${r?r.name:""} • ${memberRoleInRoom(o.key,rid,me.id)}`); } }); });
   if(!mine.length) return;
   const flag = "notif-"+ymd(today());
   if(!force && localStorage.getItem(flag)) return;
@@ -1451,10 +1659,57 @@ function toast(msg,type){
 }
 
 /* =====================================================================
+   LOGIN / SESSÃO
+   ===================================================================== */
+function showLogin(){
+  const lg=document.getElementById("login"), ap=document.getElementById("app");
+  if(ap) ap.hidden=true; if(lg) lg.hidden=false;
+  const note=document.getElementById("loginNote");
+  if(note) note.innerHTML = USE_SUPABASE
+    ? "Use o e-mail e a senha cadastrados no Supabase. O acesso é liberado apenas para quem tem papel de <b>líder</b>."
+    : "<b>Modo de teste:</b> o Supabase ainda não foi configurado, então qualquer e-mail entra como líder para você testar. Preencha a URL e a chave no topo do app.js (veja INTEGRACAO-SUPABASE.md) para ativar o login real.";
+}
+function hideLogin(){
+  const lg=document.getElementById("login"), ap=document.getElementById("app");
+  if(lg) lg.hidden=true; if(ap) ap.hidden=false;
+}
+function startApp(){ go("home"); checkTodayReminder(false); }
+async function doLogout(){
+  await Auth.signOut();
+  const e=document.getElementById("loginEmail"), p=document.getElementById("loginPass");
+  if(e) e.value=""; if(p) p.value="";
+  showLogin();
+}
+
+function wireLogin(){
+  const btn=document.getElementById("loginBtn");
+  const err=document.getElementById("loginErr");
+  const email=document.getElementById("loginEmail");
+  const pass=document.getElementById("loginPass");
+  if(!btn) return;
+  async function submit(){
+    err.textContent="";
+    btn.disabled=true; const orig=btn.textContent; btn.textContent="Entrando...";
+    try{
+      await Auth.signIn(email.value.trim(), pass.value);
+      hideLogin(); startApp();
+    }catch(e){ err.textContent = e.message || "Não foi possível entrar."; }
+    finally{ btn.disabled=false; btn.textContent=orig; }
+  }
+  btn.addEventListener("click", submit);
+  pass.addEventListener("keydown", e=>{ if(e.key==="Enter") submit(); });
+  email.addEventListener("keydown", e=>{ if(e.key==="Enter") submit(); });
+}
+
+/* =====================================================================
    INIT
    ===================================================================== */
-go("home");
-checkTodayReminder(false);
+(async function init(){
+  wireLogin();
+  await Auth.init();
+  if(Auth.user){ hideLogin(); startApp(); }
+  else showLogin();
+})();
 
 /* Versão arquivo único: sem service worker (rode pela versão hospedada para offline/instalar) */
 
