@@ -785,12 +785,10 @@ function memberRoleInRoom(key, roomId, mid){
   return null;
 }
 
-/* Papel: o login só deixa líder entrar. O toggle em "Mais" permite pré-visualizar
-   a experiência do voluntário. Quando você integrar voluntários ao login,
-   troque por: return Auth.isLeader() && DB.settings.role!=="voluntario"; */
+/* Papel vem do Supabase (tabela profiles). O login já só deixa líder entrar,
+   então quem está no app é líder. Em modo de teste local, também é líder. */
 function isLeader(){
-  if((DB.settings.role||"lider")==="voluntario") return false;   // pré-visualização
-  return Auth.role ? Auth.isLeader() : true;                      // autenticado respeita o papel
+  return Auth.role ? Auth.isLeader() : true;
 }
 
 /* Todas as ocorrências dentro de um mês do calendário */
@@ -1138,16 +1136,6 @@ function renderConfig(c){
   const leader = isLeader();
   let html = "";
 
-  // Modo de uso (papel)
-  html += `<div class="section-label">Modo de uso</div>
-    <div class="card" style="padding:6px">
-      <div class="pick" style="gap:6px">
-        <span class="pick-item ${leader?"on":""}" data-action="set-role" data-role="lider" style="flex:1;justify-content:center;${leader?"background:var(--sky-500)":""}">👑 Líder</span>
-        <span class="pick-item ${!leader?"on":""}" data-action="set-role" data-role="voluntario" style="flex:1;justify-content:center;${!leader?"background:var(--sky-500)":""}">🙋 Voluntário</span>
-      </div>
-    </div>
-    <div class="hint" style="margin:8px 4px 0">${leader?"Como líder você monta e edita escalas, equipe, salas e eventos.":"Como voluntário você acompanha as escalas e vê os seus dias, sem editar."}</div>`;
-
   // Identidade
   html += `<div class="section-label">Departamento</div>
     <div class="card" style="padding:16px">
@@ -1278,7 +1266,6 @@ document.addEventListener("click", e=>{
     case "esc-prev": escMonth--; if(escMonth<0){escMonth=11;escYear--;} go("escala"); break;
     case "esc-next": escMonth++; if(escMonth>11){escMonth=0;escYear++;} go("escala"); break;
     case "esc-today": { const t=today(); escYear=t.getFullYear(); escMonth=t.getMonth(); go("escala"); } break;
-    case "set-role": DB.settings.role=el.dataset.role; save(); go("config"); toast(el.dataset.role==="lider"?"Modo líder":"Modo voluntário","good"); break;
     case "logout": doLogout(); break;
     case "cal-prev": calMonth--; if(calMonth<0){calMonth=11;calYear--;} go("calendario"); break;
     case "cal-next": calMonth++; if(calMonth>11){calMonth=0;calYear++;} go("calendario"); break;
@@ -1804,7 +1791,10 @@ function startApp(){ go("home"); checkTodayReminder(false); }
 async function enterApp(){
   if(CLOUD){
     try{ await Data.loadAll(); }
-    catch(e){ toast("Erro ao carregar do Supabase. Você rodou o supabase-schema.sql? ("+e.message+")","warn"); }
+    catch(e){
+      DB.members=[]; DB.rooms=[]; DB.services=[]; DB.events=[]; DB.schedules={}; save();
+      toast("Não consegui carregar do Supabase ("+e.message+"). Conferir o supabase-schema.sql.","warn");
+    }
   }
   hideLogin(); startApp();
 }
