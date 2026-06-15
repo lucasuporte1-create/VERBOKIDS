@@ -1,0 +1,1302 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no" />
+  <meta name="theme-color" content="#4DA3E8" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="Escala Kids" />
+  <title>Escala Kids — Verbo Casa Caiada</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='24' fill='%234DA3E8'/%3E%3Crect width='100' height='56' rx='24' fill='%236CB8F2'/%3E%3Ccircle cx='66' cy='26' r='11' fill='%23FFE082'/%3E%3Ccircle cx='40' cy='52' r='8' fill='white'/%3E%3Crect x='33' y='56' width='14' height='18' rx='6' fill='white'/%3E%3Ccircle cx='60' cy='56' r='7' fill='%23EAF4FC'/%3E%3Crect x='54' y='60' width='12' height='16' rx='5' fill='%23EAF4FC'/%3E%3C/svg%3E" />
+  <style>
+/* ===========================================================
+   Escala Kids — Verbo Casa Caiada
+   Paleta: céu / branco, clima leve, app de uso diário
+   =========================================================== */
+:root{
+  --sky-50:#F2F9FF;
+  --sky-100:#EAF4FC;
+  --sky-200:#D4E9F9;
+  --sky-300:#A9D2F2;
+  --sky-400:#6CB8F2;
+  --sky-500:#4DA3E8;
+  --sky-600:#2E86D6;
+  --ink:#143B57;
+  --ink-soft:#3D6480;
+  --ink-faint:#7C9AB0;
+  --paper:#FBFCFE;
+  --card:#FFFFFF;
+  --line:#E4EEF7;
+  --sun:#FFD66B;
+  --sun-soft:#FFF4D6;
+  --good:#3FBF8F;
+  --good-soft:#E2F6EE;
+  --warn:#F2994A;
+  --danger:#EB6B6B;
+  --danger-soft:#FBE7E7;
+  --shadow-sm:0 2px 8px rgba(46,134,214,.08);
+  --shadow-md:0 8px 24px rgba(46,134,214,.12);
+  --shadow-lg:0 16px 40px rgba(20,59,87,.16);
+  --r-sm:12px; --r-md:18px; --r-lg:24px; --r-xl:30px;
+  --font-display:"Quicksand",system-ui,sans-serif;
+  --font-body:"Inter",system-ui,sans-serif;
+  --tab-h:68px;
+  --safe-b:env(safe-area-inset-bottom,0px);
+  --safe-t:env(safe-area-inset-top,0px);
+}
+
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0}
+body{
+  font-family:var(--font-body);
+  color:var(--ink);
+  background:
+    radial-gradient(1200px 480px at 50% -8%, var(--sky-100), transparent 60%),
+    var(--paper);
+  min-height:100dvh;
+  -webkit-font-smoothing:antialiased;
+  overscroll-behavior-y:none;
+}
+button{font-family:inherit;cursor:pointer;border:none;background:none}
+input,select,textarea{font-family:inherit}
+h1,h2,h3{font-family:var(--font-display);font-weight:700;margin:0;color:var(--ink)}
+
+#app{max-width:520px;margin:0 auto;min-height:100dvh;position:relative}
+
+/* ---------- Topbar ---------- */
+.topbar{
+  position:sticky;top:0;z-index:30;
+  padding-top:var(--safe-t);
+  background:linear-gradient(180deg, var(--sky-500), var(--sky-400));
+  color:#fff;
+  border-radius:0 0 var(--r-xl) var(--r-xl);
+  box-shadow:var(--shadow-md);
+}
+.topbar-inner{
+  display:flex;align-items:flex-end;justify-content:space-between;gap:12px;
+  padding:18px 20px 22px;
+}
+.topbar-eyebrow{
+  font-family:var(--font-display);font-weight:600;font-size:12.5px;
+  letter-spacing:.04em;opacity:.85;display:block;margin-bottom:2px;
+}
+.topbar-title{font-size:25px;color:#fff;line-height:1.1}
+.topbar-actions{display:flex;gap:8px}
+.topbar .icon-btn{
+  width:42px;height:42px;border-radius:50%;
+  background:rgba(255,255,255,.18);color:#fff;
+  display:grid;place-items:center;backdrop-filter:blur(4px);
+}
+.topbar .icon-btn svg{width:21px;height:21px}
+.topbar .icon-btn:active{transform:scale(.92)}
+
+/* ---------- Content ---------- */
+.content{
+  padding:18px 16px calc(var(--tab-h) + var(--safe-b) + 26px);
+  animation:fade .28s ease both;
+}
+@keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+/* ---------- Tabbar ---------- */
+.tabbar{
+  position:fixed;left:50%;transform:translateX(-50%);
+  bottom:0;width:100%;max-width:520px;z-index:40;
+  height:calc(var(--tab-h) + var(--safe-b));
+  padding-bottom:var(--safe-b);
+  display:grid;grid-template-columns:repeat(5,1fr);
+  background:rgba(255,255,255,.92);
+  backdrop-filter:blur(14px);
+  border-top:1px solid var(--line);
+  box-shadow:0 -6px 24px rgba(20,59,87,.06);
+}
+.tab{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;
+  color:var(--ink-faint);font-family:var(--font-display);font-weight:600;font-size:11px;
+  position:relative;transition:color .18s;
+}
+.tab svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.9;
+  stroke-linecap:round;stroke-linejoin:round;transition:transform .2s}
+.tab.is-active{color:var(--sky-600)}
+.tab.is-active svg{transform:translateY(-1px) scale(1.06)}
+.tab.is-active::before{
+  content:"";position:absolute;top:8px;width:32px;height:32px;border-radius:50%;
+  background:var(--sky-100);z-index:-1;animation:pop .2s ease}
+@keyframes pop{from{transform:scale(.4);opacity:0}to{transform:scale(1);opacity:1}}
+
+/* ---------- Cards & blocks ---------- */
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r-md);
+  box-shadow:var(--shadow-sm)}
+.section-label{font-family:var(--font-display);font-weight:700;font-size:13px;
+  letter-spacing:.04em;color:var(--ink-soft);text-transform:uppercase;
+  margin:22px 4px 10px;display:flex;align-items:center;justify-content:space-between}
+.section-label .link{color:var(--sky-600);font-size:13px;text-transform:none;letter-spacing:0}
+
+/* Hero hoje */
+.today{
+  background:linear-gradient(135deg,#fff,var(--sky-50));
+  border:1px solid var(--sky-200);border-radius:var(--r-lg);
+  padding:18px;box-shadow:var(--shadow-md);position:relative;overflow:hidden}
+.today::after{content:"";position:absolute;right:-30px;top:-30px;width:120px;height:120px;
+  border-radius:50%;background:var(--sun-soft);opacity:.7}
+.today-date{display:flex;align-items:center;gap:10px;position:relative}
+.today-sun{width:38px;height:38px;border-radius:12px;background:var(--sun-soft);
+  display:grid;place-items:center;color:#E9A93A;flex:none}
+.today-sun svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round}
+.today-day{font-family:var(--font-display);font-weight:700;font-size:17px;text-transform:capitalize}
+.today-sub{font-size:13px;color:var(--ink-soft)}
+.today-event{margin-top:14px;font-family:var(--font-display);font-weight:700;font-size:16px;
+  color:var(--sky-600);position:relative}
+.today-empty{margin-top:12px;font-size:13.5px;color:var(--ink-soft);position:relative}
+
+/* Stats */
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:var(--r-md);
+  padding:14px 10px;text-align:center;box-shadow:var(--shadow-sm)}
+.stat b{font-family:var(--font-display);font-size:24px;display:block;color:var(--sky-600);line-height:1}
+.stat span{font-size:11.5px;color:var(--ink-soft);font-weight:500}
+
+/* Room cards */
+.room{display:flex;align-items:center;gap:13px;padding:14px;border-radius:var(--r-md);
+  background:var(--card);border:1px solid var(--line);box-shadow:var(--shadow-sm);
+  margin-bottom:10px;transition:transform .15s}
+.room:active{transform:scale(.99)}
+.room-ico{width:46px;height:46px;border-radius:14px;flex:none;display:grid;place-items:center;
+  font-size:22px}
+.room-info{flex:1;min-width:0}
+.room-name{font-family:var(--font-display);font-weight:700;font-size:15.5px}
+.room-age{font-size:12.5px;color:var(--ink-soft)}
+.room-count{display:flex;align-items:center;gap:6px;font-size:12.5px;font-weight:600;
+  color:var(--ink-soft);white-space:nowrap}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--good)}
+.dot.low{background:var(--warn)}.dot.empty{background:var(--danger)}
+
+/* Avatars */
+.ava{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;
+  font-family:var(--font-display);font-weight:700;font-size:13px;color:#fff;flex:none;
+  border:2px solid #fff}
+.ava-row{display:flex}
+.ava-row .ava:not(:first-child){margin-left:-10px}
+.ava-more{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;
+  background:var(--sky-100);color:var(--sky-600);font-weight:700;font-size:12px;
+  border:2px solid #fff;margin-left:-10px}
+
+/* Member list */
+.person{display:flex;align-items:center;gap:12px;padding:12px 14px;background:var(--card);
+  border:1px solid var(--line);border-radius:var(--r-md);margin-bottom:9px;box-shadow:var(--shadow-sm)}
+.person-info{flex:1;min-width:0}
+.person-name{font-weight:600;font-size:14.5px;display:flex;align-items:center;gap:7px}
+.person-meta{font-size:12px;color:var(--ink-soft);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.chip{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:600;
+  padding:2px 9px;border-radius:999px;background:var(--sky-100);color:var(--sky-600)}
+.chip.muted{background:#EEF2F6;color:var(--ink-faint)}
+.chip.sun{background:var(--sun-soft);color:#B9831F}
+.chip.good{background:var(--good-soft);color:#1F8A63}
+
+/* Schedule day groups */
+.sched-day{margin-bottom:18px}
+.sched-head{display:flex;align-items:center;justify-content:space-between;margin:0 4px 9px}
+.sched-date{font-family:var(--font-display);font-weight:700;font-size:15px}
+.sched-when{font-size:12px;color:var(--ink-soft)}
+.sched-room{display:flex;align-items:center;gap:11px;padding:11px 13px;border-radius:14px;
+  background:var(--card);border:1px solid var(--line);margin-bottom:7px}
+.sched-room .room-ico{width:38px;height:38px;border-radius:11px;font-size:18px}
+.sched-room-names{flex:1;min-width:0;font-size:13px;color:var(--ink-soft)}
+.sched-room-title{font-weight:600;font-size:13.5px;color:var(--ink);margin-bottom:1px}
+
+/* Calendar */
+.cal{background:var(--card);border:1px solid var(--line);border-radius:var(--r-lg);
+  padding:14px;box-shadow:var(--shadow-sm)}
+.cal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.cal-month{font-family:var(--font-display);font-weight:700;font-size:17px;text-transform:capitalize}
+.cal-nav{display:flex;gap:6px}
+.cal-nav button{width:36px;height:36px;border-radius:11px;background:var(--sky-50);
+  color:var(--sky-600);display:grid;place-items:center}
+.cal-nav button:active{background:var(--sky-100)}
+.cal-nav svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
+.cal-wd{text-align:center;font-size:11px;font-weight:700;color:var(--ink-faint);padding:4px 0}
+.cal-cell{aspect-ratio:1;border-radius:12px;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;font-size:13.5px;font-weight:500;
+  color:var(--ink);position:relative;border:1px solid transparent}
+.cal-cell.muted{color:var(--sky-200)}
+.cal-cell.today{background:var(--sky-500);color:#fff;font-weight:700}
+.cal-cell.has{background:var(--sky-50);border-color:var(--sky-200)}
+.cal-cell.sel{outline:2px solid var(--sky-500);outline-offset:-2px}
+.cal-cell .pip{position:absolute;bottom:5px;width:5px;height:5px;border-radius:50%;background:var(--sky-500)}
+.cal-cell.today .pip{background:#fff}
+.cal-cell .pip.ev{background:var(--sun)}
+
+/* Day detail */
+.day-detail{margin-top:16px}
+.event-line{display:flex;align-items:center;gap:11px;padding:13px;border-radius:14px;
+  background:var(--card);border:1px solid var(--line);margin-bottom:8px;box-shadow:var(--shadow-sm)}
+.event-tag{width:6px;align-self:stretch;border-radius:6px;flex:none}
+.event-info{flex:1}
+.event-title{font-weight:600;font-size:14.5px}
+.event-time{font-size:12.5px;color:var(--ink-soft)}
+
+/* Buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  font-family:var(--font-display);font-weight:700;font-size:15px;
+  padding:13px 18px;border-radius:14px;transition:transform .12s,box-shadow .2s}
+.btn:active{transform:scale(.97)}
+.btn svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.btn-primary{background:var(--sky-500);color:#fff;box-shadow:0 6px 16px rgba(77,163,232,.35)}
+.btn-primary:active{background:var(--sky-600)}
+.btn-ghost{background:var(--sky-50);color:var(--sky-600)}
+.btn-soft{background:#fff;color:var(--ink-soft);border:1px solid var(--line)}
+.btn-danger{background:var(--danger-soft);color:var(--danger)}
+.btn-wa{background:var(--good);color:#fff;box-shadow:0 6px 16px rgba(63,191,143,.32)}
+.btn-block{width:100%}
+.btn-row{display:flex;gap:10px;margin-top:12px}
+.btn-row .btn{flex:1}
+
+.fab{position:fixed;right:max(18px,calc(50% - 260px + 18px));
+  bottom:calc(var(--tab-h) + var(--safe-b) + 16px);z-index:35;
+  width:56px;height:56px;border-radius:20px;background:var(--sky-500);color:#fff;
+  display:grid;place-items:center;box-shadow:var(--shadow-lg)}
+.fab svg{width:26px;height:26px;fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round}
+.fab:active{transform:scale(.92)}
+
+.icon-btn{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;color:var(--ink-soft)}
+.icon-btn svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.icon-btn.sm{width:34px;height:34px;border-radius:10px}
+.icon-btn.sm svg{width:17px;height:17px}
+
+/* Empty state */
+.empty{text-align:center;padding:42px 24px;color:var(--ink-soft)}
+.empty-emoji{font-size:42px;margin-bottom:10px}
+.empty h3{color:var(--ink);font-size:17px;margin-bottom:5px}
+.empty p{font-size:13.5px;margin:0 0 16px;line-height:1.5}
+
+/* Forms */
+.field{margin-bottom:14px}
+.field label{display:block;font-family:var(--font-display);font-weight:600;font-size:13px;
+  color:var(--ink-soft);margin-bottom:6px}
+.field input,.field select,.field textarea{
+  width:100%;padding:12px 14px;border:1.5px solid var(--line);border-radius:13px;
+  font-size:15px;color:var(--ink);background:var(--sky-50);transition:border-color .18s,background .18s}
+.field input:focus,.field select:focus,.field textarea:focus{
+  outline:none;border-color:var(--sky-400);background:#fff}
+.field textarea{resize:vertical;min-height:64px}
+.field .hint{font-size:11.5px;color:var(--ink-faint);margin-top:5px}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+
+/* Pick list (multi select rooms / members) */
+.pick{display:flex;flex-wrap:wrap;gap:8px}
+.pick-item{padding:8px 13px;border-radius:999px;font-size:13px;font-weight:600;
+  border:1.5px solid var(--line);background:#fff;color:var(--ink-soft);display:flex;align-items:center;gap:6px}
+.pick-item.on{border-color:transparent;color:#fff}
+.pick-item .pk-dot{width:9px;height:9px;border-radius:50%}
+
+/* Toggle switch */
+.toggle{display:flex;align-items:center;justify-content:space-between;
+  padding:13px 14px;background:var(--sky-50);border-radius:13px;margin-bottom:10px}
+.toggle-label{font-size:14px;font-weight:500}
+.sw{width:46px;height:27px;border-radius:999px;background:#CBD9E6;position:relative;transition:background .2s;flex:none}
+.sw.on{background:var(--sky-500)}
+.sw::after{content:"";position:absolute;top:3px;left:3px;width:21px;height:21px;border-radius:50%;
+  background:#fff;transition:transform .2s;box-shadow:0 1px 3px rgba(0,0,0,.2)}
+.sw.on::after{transform:translateX(19px)}
+
+/* Modal */
+.modal-backdrop{position:fixed;inset:0;z-index:60;background:rgba(20,59,87,.42);
+  backdrop-filter:blur(3px);display:flex;align-items:flex-end;justify-content:center;
+  animation:fadeBg .2s ease}
+.modal-backdrop[hidden]{display:none}
+@keyframes fadeBg{from{opacity:0}to{opacity:1}}
+.modal{background:var(--paper);width:100%;max-width:520px;border-radius:var(--r-xl) var(--r-xl) 0 0;
+  max-height:92dvh;display:flex;flex-direction:column;animation:slideUp .3s cubic-bezier(.2,.9,.3,1) both;
+  padding-bottom:var(--safe-b)}
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:none}}
+.modal-head{display:flex;align-items:center;justify-content:space-between;padding:18px 20px 6px;flex:none}
+.modal-head::before{content:"";position:absolute;top:8px;left:50%;transform:translateX(-50%);
+  width:42px;height:4px;border-radius:99px;background:var(--sky-200)}
+.modal-title{font-size:19px}
+.modal-body{padding:8px 20px 4px;overflow-y:auto}
+.modal-foot{padding:12px 20px 18px;flex:none}
+
+/* Toast */
+.toast{position:fixed;left:50%;bottom:calc(var(--tab-h) + var(--safe-b) + 20px);
+  transform:translateX(-50%) translateY(20px);z-index:80;
+  background:var(--ink);color:#fff;font-weight:600;font-size:14px;
+  padding:13px 20px;border-radius:14px;box-shadow:var(--shadow-lg);opacity:0;
+  transition:opacity .25s,transform .25s;max-width:90%;text-align:center}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.toast.good{background:var(--good)}
+.toast.warn{background:var(--warn)}
+
+/* Banner (notif permission) */
+.banner{display:flex;align-items:center;gap:12px;padding:13px 15px;border-radius:var(--r-md);
+  background:var(--sun-soft);border:1px solid #F2DFA8;margin-bottom:14px}
+.banner svg{width:24px;height:24px;flex:none;color:#C98E1E;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.banner-txt{flex:1;font-size:13px;color:#7A5A12;line-height:1.4}
+.banner-txt b{color:#5E4407}
+
+/* Misc */
+.spacer{height:8px}
+.muted-txt{color:var(--ink-soft);font-size:13.5px}
+.divider{height:1px;background:var(--line);margin:16px 0}
+.list-tap{cursor:pointer}
+@media (prefers-reduced-motion:reduce){
+  *{animation-duration:.01ms !important;transition-duration:.01ms !important}
+}
+
+  </style>
+</head>
+<body>
+  <div id="app">
+    <!-- Topo -->
+    <header class="topbar" id="topbar">
+      <div class="topbar-inner">
+        <div class="topbar-titles">
+          <span class="topbar-eyebrow" id="topEyebrow">Verbo Casa Caiada</span>
+          <h1 class="topbar-title" id="topTitle">Início</h1>
+        </div>
+        <div class="topbar-actions" id="topActions"></div>
+      </div>
+    </header>
+
+    <!-- Conteúdo das telas -->
+    <main class="content" id="content"></main>
+
+    <!-- Navegação inferior -->
+    <nav class="tabbar" id="tabbar">
+      <button class="tab is-active" data-view="home" aria-label="Início">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg>
+        <span>Início</span>
+      </button>
+      <button class="tab" data-view="escala" aria-label="Escala">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="4.5" width="17" height="16" rx="2.5"/><path d="M3.5 9h17"/><path d="M8 14h3M8 17h6"/></svg>
+        <span>Escala</span>
+      </button>
+      <button class="tab" data-view="calendario" aria-label="Calendário">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="4.5" width="17" height="16" rx="2.5"/><path d="M8 2.5v4M16 2.5v4M3.5 9.5h17"/></svg>
+        <span>Agenda</span>
+      </button>
+      <button class="tab" data-view="membros" aria-label="Membros">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3.2"/><path d="M3.5 20c0-3.3 2.5-5.5 5.5-5.5s5.5 2.2 5.5 5.5"/><path d="M16 5.2a3 3 0 0 1 0 5.6M17 14.6c2.3.5 3.9 2.3 3.9 5"/></svg>
+        <span>Equipe</span>
+      </button>
+      <button class="tab" data-view="config" aria-label="Mais">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 12a7.4 7.4 0 0 0-.1-1.4l1.9-1.5-1.9-3.3-2.3.9a7.4 7.4 0 0 0-2.4-1.4L14.1 2H9.9l-.4 2.4a7.4 7.4 0 0 0-2.4 1.4l-2.3-.9-1.9 3.3L4.7 10a7.4 7.4 0 0 0 0 2.8l-1.9 1.5 1.9 3.3 2.3-.9a7.4 7.4 0 0 0 2.4 1.4l.4 2.4h4.2l.4-2.4a7.4 7.4 0 0 0 2.4-1.4l2.3.9 1.9-3.3-1.9-1.5c.1-.4.1-.9.1-1.3z"/></svg>
+        <span>Mais</span>
+      </button>
+    </nav>
+  </div>
+
+  <!-- Modal genérico -->
+  <div class="modal-backdrop" id="modalBackdrop" hidden>
+    <div class="modal" id="modal" role="dialog" aria-modal="true">
+      <div class="modal-head">
+        <h2 class="modal-title" id="modalTitle">Título</h2>
+        <button class="icon-btn" id="modalClose" aria-label="Fechar">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+        </button>
+      </div>
+      <div class="modal-body" id="modalBody"></div>
+      <div class="modal-foot" id="modalFoot"></div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast" hidden></div>
+
+  <script>
+/* ===========================================================
+   Escala Kids — Verbo Casa Caiada
+   App de escala do departamento infantil (PWA, offline, local)
+   =========================================================== */
+
+/* ---------------- Persistência ---------------- */
+const STORE_KEY = "escala-kids-v1";
+let DB = load();
+
+function load(){
+  try{
+    const raw = localStorage.getItem(STORE_KEY);
+    if(raw) return JSON.parse(raw);
+  }catch(e){}
+  const fresh = seed();
+  try{ localStorage.setItem(STORE_KEY, JSON.stringify(fresh)); }catch(e){}
+  return fresh;
+}
+function save(){
+  try{ localStorage.setItem(STORE_KEY, JSON.stringify(DB)); }catch(e){
+    toast("Não consegui salvar. Espaço do navegador cheio?", "warn");
+  }
+}
+function uid(){ return Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
+
+/* ---------------- Dados iniciais ---------------- */
+function seed(){
+  const rooms = [
+    {id:uid(), name:"Berçário",        age:"0 a 1 ano",   emoji:"🍼", bg:"#EAF4FC", fg:"#2E86D6", need:3},
+    {id:uid(), name:"Maternal",        age:"1 a 3 anos",  emoji:"🧸", bg:"#FFF0E6", fg:"#E07B2E", need:2},
+    {id:uid(), name:"Jardim",          age:"3 a 5 anos",  emoji:"🎨", bg:"#EAF7F0", fg:"#239B6E", need:2},
+    {id:uid(), name:"Primários",       age:"6 a 8 anos",  emoji:"📚", bg:"#F1ECFB", fg:"#7A5BCC", need:2},
+    {id:uid(), name:"Juniores",        age:"9 a 11 anos", emoji:"⚽", bg:"#FDEDF2", fg:"#D0497C", need:2},
+    {id:uid(), name:"Pré-adolescentes",age:"12 a 14 anos",emoji:"🎮", bg:"#FFF6DA", fg:"#C9941A", need:2},
+  ];
+  const services = [
+    {id:uid(), name:"Culto da Família", weekday:0, time:"09:00", color:"#4DA3E8"},
+    {id:uid(), name:"Culto da Noite",   weekday:0, time:"18:00", color:"#7A5BCC"},
+    {id:uid(), name:"Culto de Quarta",  weekday:3, time:"19:30", color:"#239B6E"},
+  ];
+  const m = (name,phone,role,roomIdx)=>({id:uid(),name,phone,role,roomIds:roomIdx.map(i=>rooms[i].id),active:true,notes:""});
+  const members = [
+    m("Ana Beatriz","81999990001","Líder",[0,1]),
+    m("Carla Mendes","81999990002","Tia",[1,2]),
+    m("Daniel Souza","81999990003","Apoio",[3,4]),
+    m("Juliana Lima","81999990004","Tia",[2,3]),
+  ];
+  return {
+    settings:{ church:"Verbo Casa Caiada", dept:"Departamento Infantil",
+               notify:false, reminderTime:"08:00", meId:"" },
+    rooms, services, members,
+    events:[],          // eventos pontuais {id,date,title,time,note}
+    schedules:{}        // { occKey: { roomId: [memberId,...] } }
+  };
+}
+
+/* ---------------- Helpers de data ---------------- */
+const WD = ["Domingo","Segunda","Terça","Quarta","Quinta","Sexta","Sábado"];
+const WD_SHORT = ["Dom","Seg","Ter","Qua","Qui","Sex","Sáb"];
+const MONTHS = ["Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"];
+const MONTHS_SHORT = ["jan","fev","mar","abr","mai","jun","jul","ago","set","out","nov","dez"];
+
+function ymd(d){ return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"); }
+function parseYmd(s){ const [y,mo,da]=s.split("-").map(Number); return new Date(y,mo-1,da); }
+function today(){ const d=new Date(); d.setHours(0,0,0,0); return d; }
+function fmtLong(s){ const d=parseYmd(s); return `${WD[d.getDay()]}, ${d.getDate()} de ${MONTHS[d.getMonth()]}`; }
+function fmtShort(s){ const d=parseYmd(s); return `${WD_SHORT[d.getDay()]}, ${d.getDate()} ${MONTHS_SHORT[d.getMonth()]}`; }
+
+/* ---------------- Helpers diversos ---------------- */
+function esc(s){ return String(s==null?"":s).replace(/[&<>"']/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c])); }
+function initials(name){ const p=name.trim().split(/\s+/); return ((p[0]||"")[0]||"").toUpperCase()+((p[1]||"")[0]||"").toUpperCase(); }
+const AVA_COLORS = ["#4DA3E8","#7A5BCC","#239B6E","#E07B2E","#D0497C","#2E86D6","#C9941A","#3FBF8F"];
+function avaColor(id){ let h=0; for(const c of id) h=(h*31+c.charCodeAt(0))>>>0; return AVA_COLORS[h%AVA_COLORS.length]; }
+function ava(name,id,extraStyle=""){ return `<div class="ava" style="background:${avaColor(id)};${extraStyle}">${esc(initials(name))}</div>`; }
+function getMember(id){ return DB.members.find(m=>m.id===id); }
+function getRoom(id){ return DB.rooms.find(r=>r.id===id); }
+function getService(id){ return DB.services.find(s=>s.id===id); }
+function cleanPhone(p){ let d=(p||"").replace(/\D/g,""); if(d && d.length<=11) d="55"+d; return d; }
+
+/* Ocorrências de culto/evento numa data (string ymd) */
+function occsOnDate(dateStr){
+  const d=parseYmd(dateStr), wd=d.getDay(), list=[];
+  DB.services.forEach(s=>{ if(s.weekday===wd) list.push({key:`s:${s.id}:${dateStr}`,date:dateStr,title:s.name,time:s.time,color:s.color,type:"culto",refId:s.id}); });
+  DB.events.filter(e=>e.date===dateStr).forEach(e=>{ list.push({key:`e:${e.id}`,date:dateStr,title:e.title,time:e.time||"",color:"#F2994A",type:"evento",refId:e.id,note:e.note}); });
+  return list.sort((a,b)=>(a.time||"99").localeCompare(b.time||"99"));
+}
+/* Próximas ocorrências a partir de hoje (n dias à frente) */
+function upcomingOccs(days=21){
+  const out=[]; const base=today();
+  for(let i=0;i<days;i++){ const d=new Date(base); d.setDate(base.getDate()+i); out.push(...occsOnDate(ymd(d))); }
+  return out;
+}
+function schedFor(key){ return DB.schedules[key] || {}; }
+function assignedCount(key){ const s=schedFor(key); return Object.values(s).reduce((a,arr)=>a+arr.length,0); }
+
+/* ---------------- Roteador ---------------- */
+const VIEWS = {
+  home:{title:"Início", render:renderHome},
+  escala:{title:"Escala", render:renderEscala},
+  calendario:{title:"Agenda", render:renderCalendario},
+  membros:{title:"Equipe", render:renderMembros},
+  config:{title:"Mais", render:renderConfig},
+};
+let currentView = "home";
+
+function go(view){
+  currentView = view;
+  document.querySelectorAll(".tab").forEach(t=>t.classList.toggle("is-active", t.dataset.view===view));
+  document.getElementById("topTitle").textContent = VIEWS[view].title;
+  const content = document.getElementById("content");
+  document.getElementById("topActions").innerHTML = "";
+  content.innerHTML = "";
+  VIEWS[view].render(content);
+  content.scrollTop = 0; window.scrollTo(0,0);
+}
+
+document.getElementById("tabbar").addEventListener("click", e=>{
+  const b=e.target.closest(".tab"); if(b) go(b.dataset.view);
+});
+
+/* =====================================================================
+   VIEW: INÍCIO
+   ===================================================================== */
+function renderHome(c){
+  const t = today();
+  const todayStr = ymd(t);
+  const occs = occsOnDate(todayStr);
+  const me = DB.settings.meId ? getMember(DB.settings.meId) : null;
+
+  let html = "";
+
+  // Banner de notificação
+  if(!DB.settings.notify && "Notification" in window){
+    html += `<div class="banner">
+      <svg viewBox="0 0 24 24"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg>
+      <div class="banner-txt"><b>Lembretes de escala</b><br>Ative para ser avisado nos dias em que estiver escalado.</div>
+      <button class="btn btn-ghost" data-action="enable-notif" style="padding:9px 12px;font-size:13px">Ativar</button>
+    </div>`;
+  }
+
+  // "Você" escalado hoje
+  if(me){
+    const minhasSalas = occs.flatMap(o=>{ const s=schedFor(o.key);
+      return Object.keys(s).filter(rid=>s[rid].includes(me.id)).map(rid=>({occ:o,room:getRoom(rid)})); });
+    if(minhasSalas.length){
+      html += `<div class="today" style="background:linear-gradient(135deg,#fff,var(--good-soft));border-color:#BFE9D7;margin-bottom:14px">
+        <div class="today-date"><div class="today-sun" style="background:var(--good-soft);color:#1F8A63">
+          <svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></div>
+          <div><div class="today-day">É o seu dia, ${esc(me.name.split(" ")[0])}!</div>
+          <div class="today-sub">Você está escalado hoje</div></div></div>
+        ${minhasSalas.map(x=>`<div class="today-event" style="color:#1F8A63">${esc(x.occ.title)} • ${esc(x.room?x.room.name:"—")} ${x.occ.time?"• "+x.occ.time:""}</div>`).join("")}
+      </div>`;
+    }
+  }
+
+  // Card de hoje
+  html += `<div class="today">
+    <div class="today-date">
+      <div class="today-sun"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2M12 20v2M4.2 4.2l1.5 1.5M18.3 18.3l1.5 1.5M2 12h2M20 12h2M4.2 19.8l1.5-1.5M18.3 5.7l1.5-1.5"/></svg></div>
+      <div><div class="today-day">${WD[t.getDay()]}, ${t.getDate()} de ${MONTHS[t.getMonth()]}</div>
+      <div class="today-sub">${DB.settings.dept}</div></div>
+    </div>`;
+  if(occs.length){
+    occs.forEach(o=>{
+      const n = assignedCount(o.key);
+      html += `<div class="today-event list-tap" data-action="open-occ" data-key="${o.key}">${esc(o.title)} ${o.time?"• "+o.time:""}
+        <span class="today-sub" style="display:block;font-weight:500">${n? n+" pessoa(s) escalada(s)" : "Sem escala definida — toque para montar"}</span></div>`;
+    });
+  } else {
+    html += `<div class="today-empty">Sem culto programado para hoje. Aproveite o descanso! 💙</div>`;
+  }
+  html += `</div>`;
+
+  // Stats
+  const ativos = DB.members.filter(m=>m.active).length;
+  html += `<div class="stats">
+    <div class="stat"><b>${ativos}</b><span>na equipe</span></div>
+    <div class="stat"><b>${DB.rooms.length}</b><span>salas</span></div>
+    <div class="stat"><b>${upcomingOccs(7).length}</b><span>cultos/7 dias</span></div>
+  </div>`;
+
+  // Próximos cultos
+  const up = upcomingOccs(14).slice(0,4);
+  html += `<div class="section-label">Próximos cultos <span class="link" data-action="goto" data-view="escala">Ver escala</span></div>`;
+  if(up.length){
+    up.forEach(o=>{
+      const n = assignedCount(o.key);
+      const status = n>=4 ? `<span class="dot"></span>` : n>0 ? `<span class="dot low"></span>` : `<span class="dot empty"></span>`;
+      html += `<div class="room list-tap" data-action="open-occ" data-key="${o.key}">
+        <div class="room-ico" style="background:${o.color}22;color:${o.color}">${o.type==="evento"?"🎉":"⛪"}</div>
+        <div class="room-info"><div class="room-name">${esc(o.title)}</div>
+          <div class="room-age">${fmtShort(o.date)} ${o.time?"• "+o.time:""}</div></div>
+        <div class="room-count">${status}${n}</div>
+      </div>`;
+    });
+  } else {
+    html += `<p class="muted-txt" style="text-align:center;padding:14px">Nenhum culto nos próximos dias.</p>`;
+  }
+
+  // Salas resumo
+  html += `<div class="section-label">Salas <span class="link" data-action="goto" data-view="config">Editar</span></div>`;
+  DB.rooms.forEach(r=>{
+    const qtd = DB.members.filter(m=>m.active && m.roomIds.includes(r.id)).length;
+    html += `<div class="room">
+      <div class="room-ico" style="background:${r.bg};color:${r.fg}">${r.emoji}</div>
+      <div class="room-info"><div class="room-name">${esc(r.name)}</div><div class="room-age">${esc(r.age)}</div></div>
+      <div class="room-count"><span class="chip muted">${qtd} aptos</span></div>
+    </div>`;
+  });
+
+  c.innerHTML = html;
+}
+
+/* =====================================================================
+   VIEW: ESCALA
+   ===================================================================== */
+function renderEscala(c){
+  document.getElementById("topActions").innerHTML =
+    `<button class="icon-btn" data-action="new-schedule" aria-label="Montar escala">
+      <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></button>`;
+
+  const occs = upcomingOccs(28);
+  let html = "";
+
+  if(!occs.length){
+    html = emptyState("📅","Nenhum culto à vista","Cadastre cultos e eventos na aba Agenda para começar a montar a escala.",
+      `<button class="btn btn-primary" data-action="goto" data-view="calendario">Ir para Agenda</button>`);
+    c.innerHTML = html; return;
+  }
+
+  // agrupar por data
+  const byDate = {};
+  occs.forEach(o=>{ (byDate[o.date] = byDate[o.date]||[]).push(o); });
+
+  html += `<button class="btn btn-primary btn-block" data-action="new-schedule" style="margin-bottom:6px">
+    <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg> Montar nova escala</button>`;
+
+  Object.keys(byDate).forEach(date=>{
+    html += `<div class="sched-day">
+      <div class="sched-head"><div class="sched-date">${fmtLong(date)}</div></div>`;
+    byDate[date].forEach(o=>{
+      const sched = schedFor(o.key);
+      const n = assignedCount(o.key);
+      html += `<div class="sched-room" style="border-left:4px solid ${o.color}">
+        <div class="room-ico" style="background:${o.color}22;color:${o.color}">${o.type==="evento"?"🎉":"⛪"}</div>
+        <div class="sched-room-names"><div class="sched-room-title">${esc(o.title)} ${o.time?"<span class='sched-when'>• "+o.time+"</span>":""}</div>
+          ${n? n+" escalado(s)" : "Sem escala"}</div>
+        <button class="btn btn-ghost" data-action="open-occ" data-key="${o.key}" style="padding:8px 14px;font-size:13px">${n?"Ver":"Montar"}</button>
+      </div>`;
+      // detalhe das salas com gente escalada
+      Object.keys(sched).forEach(rid=>{
+        if(!sched[rid].length) return;
+        const r=getRoom(rid); if(!r) return;
+        const people = sched[rid].map(id=>getMember(id)).filter(Boolean);
+        html += `<div style="display:flex;align-items:center;gap:10px;padding:6px 13px 6px 50px">
+          <span class="chip" style="background:${r.bg};color:${r.fg}">${r.emoji} ${esc(r.name)}</span>
+          <div class="ava-row">${people.slice(0,5).map(p=>ava(p.name,p.id)).join("")}
+            ${people.length>5?`<div class="ava-more">+${people.length-5}</div>`:""}</div>
+        </div>`;
+      });
+    });
+    html += `</div>`;
+  });
+
+  c.innerHTML = html;
+}
+
+/* =====================================================================
+   VIEW: CALENDÁRIO / AGENDA
+   ===================================================================== */
+let calYear, calMonth, calSelected=null;
+function renderCalendario(c){
+  document.getElementById("topActions").innerHTML =
+    `<button class="icon-btn" data-action="new-event" aria-label="Novo evento">
+      <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></button>`;
+
+  const t=today();
+  if(calYear==null){ calYear=t.getFullYear(); calMonth=t.getMonth(); }
+  if(!calSelected) calSelected = ymd(t);
+
+  const first = new Date(calYear, calMonth, 1);
+  const startWd = first.getDay();
+  const daysInMonth = new Date(calYear, calMonth+1, 0).getDate();
+  const prevDays = new Date(calYear, calMonth, 0).getDate();
+
+  let cells = "";
+  WD_SHORT.forEach(w=>cells+=`<div class="cal-wd">${w[0]}</div>`);
+  // dias do mês anterior (preenchimento)
+  for(let i=startWd-1;i>=0;i--) cells+=`<div class="cal-cell muted">${prevDays-i}</div>`;
+  for(let day=1;day<=daysInMonth;day++){
+    const ds = `${calYear}-${String(calMonth+1).padStart(2,"0")}-${String(day).padStart(2,"0")}`;
+    const occ = occsOnDate(ds);
+    const isToday = ds===ymd(t);
+    const isSel = ds===calSelected;
+    let cls="cal-cell"; if(isToday) cls+=" today"; if(occ.length && !isToday) cls+=" has"; if(isSel) cls+=" sel";
+    let pips="";
+    if(occ.some(o=>o.type==="culto")) pips+=`<span class="pip"></span>`;
+    if(occ.some(o=>o.type==="evento")) pips+=`<span class="pip ev"></span>`;
+    cells+=`<div class="${cls}" data-action="sel-day" data-date="${ds}">${day}${pips?`<span style="position:absolute;bottom:5px;display:flex;gap:2px">${pips}</span>`:""}</div>`;
+  }
+
+  let html = `<div class="cal">
+    <div class="cal-head">
+      <div class="cal-month">${MONTHS[calMonth]} ${calYear}</div>
+      <div class="cal-nav">
+        <button data-action="cal-prev"><svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg></button>
+        <button data-action="cal-today" style="width:auto;padding:0 12px;font-family:var(--font-display);font-weight:700;font-size:13px">Hoje</button>
+        <button data-action="cal-next"><svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg></button>
+      </div>
+    </div>
+    <div class="cal-grid">${cells}</div>
+  </div>`;
+
+  // legenda
+  html += `<div style="display:flex;gap:16px;justify-content:center;margin:12px 0 4px;font-size:12px;color:var(--ink-soft)">
+    <span style="display:flex;align-items:center;gap:6px"><span class="pip" style="position:static;width:6px;height:6px;background:var(--sky-500)"></span> Culto</span>
+    <span style="display:flex;align-items:center;gap:6px"><span class="pip" style="position:static;width:6px;height:6px;background:var(--sun)"></span> Evento</span>
+  </div>`;
+
+  // detalhe do dia selecionado
+  const occs = occsOnDate(calSelected);
+  html += `<div class="day-detail"><div class="section-label">${fmtLong(calSelected)}</div>`;
+  if(occs.length){
+    occs.forEach(o=>{
+      const n=assignedCount(o.key);
+      html += `<div class="event-line list-tap" data-action="open-occ" data-key="${o.key}">
+        <div class="event-tag" style="background:${o.color}"></div>
+        <div class="event-info"><div class="event-title">${esc(o.title)}</div>
+          <div class="event-time">${o.type==="evento"?"Evento":"Culto"} ${o.time?"• "+o.time:""} • ${n} escalado(s)</div>
+          ${o.note?`<div class="event-time" style="margin-top:2px">${esc(o.note)}</div>`:""}</div>
+        ${o.type==="evento"?`<button class="icon-btn sm" data-action="edit-event" data-id="${o.refId}"><svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4z"/></svg></button>`:""}
+      </div>`;
+    });
+  } else {
+    html += `<p class="muted-txt" style="text-align:center;padding:14px">Nada marcado neste dia.</p>`;
+  }
+  html += `<button class="btn btn-ghost btn-block" data-action="new-event-on" data-date="${calSelected}" style="margin-top:6px">
+    <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg> Adicionar evento neste dia</button>`;
+  html += `</div>`;
+
+  c.innerHTML = html;
+}
+
+/* =====================================================================
+   VIEW: MEMBROS / EQUIPE
+   ===================================================================== */
+let memberFilter = "all";
+function renderMembros(c){
+  document.getElementById("topActions").innerHTML =
+    `<button class="icon-btn" data-action="new-member" aria-label="Novo membro">
+      <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></button>`;
+
+  let html = `<div class="pick" style="margin-bottom:14px">
+    <span class="pick-item ${memberFilter==="all"?"on":""}" data-action="mfilter" data-f="all" style="${memberFilter==="all"?"background:var(--sky-500)":""}">Todos</span>
+    ${DB.rooms.map(r=>`<span class="pick-item ${memberFilter===r.id?"on":""}" data-action="mfilter" data-f="${r.id}" style="${memberFilter===r.id?`background:${r.fg}`:""}">${r.emoji} ${esc(r.name)}</span>`).join("")}
+  </div>`;
+
+  let list = DB.members.slice().sort((a,b)=>a.name.localeCompare(b.name,"pt"));
+  if(memberFilter!=="all") list = list.filter(m=>m.roomIds.includes(memberFilter));
+
+  if(!list.length){
+    html += emptyState("👥","Nenhuma pessoa aqui","Cadastre os voluntários do ministério para começar a montar as escalas.",
+      `<button class="btn btn-primary" data-action="new-member">Cadastrar pessoa</button>`);
+    c.innerHTML = html; return;
+  }
+
+  list.forEach(m=>{
+    const roomNames = m.roomIds.map(id=>{ const r=getRoom(id); return r?r.emoji:""; }).join(" ");
+    html += `<div class="person list-tap" data-action="open-member" data-id="${m.id}">
+      ${ava(m.name,m.id,m.active?"":"opacity:.45")}
+      <div class="person-info">
+        <div class="person-name">${esc(m.name)} ${!m.active?`<span class="chip muted">inativo</span>`:""}</div>
+        <div class="person-meta">${esc(m.role||"Voluntário")} ${roomNames?"• "+roomNames:""}</div>
+      </div>
+      ${m.phone?`<button class="icon-btn sm" data-action="wa-member" data-id="${m.id}" aria-label="WhatsApp" style="color:var(--good)">
+        <svg viewBox="0 0 24 24" stroke-width="1.8"><path d="M21 11.5a8.5 8.5 0 0 1-12.6 7.4L3 21l2.2-5.3A8.5 8.5 0 1 1 21 11.5z"/></svg></button>`:""}
+    </div>`;
+  });
+
+  c.innerHTML = html;
+}
+
+/* =====================================================================
+   VIEW: CONFIG / MAIS
+   ===================================================================== */
+function renderConfig(c){
+  const me = DB.settings.meId ? getMember(DB.settings.meId) : null;
+  let html = "";
+
+  // Identidade
+  html += `<div class="section-label">Departamento</div>
+    <div class="card" style="padding:16px">
+      <div class="field"><label>Igreja</label><input id="cfgChurch" value="${esc(DB.settings.church)}"></div>
+      <div class="field" style="margin-bottom:0"><label>Departamento</label><input id="cfgDept" value="${esc(DB.settings.dept)}"></div>
+    </div>`;
+
+  // Lembretes
+  html += `<div class="section-label">Lembretes</div>
+    <div class="card" style="padding:14px">
+      <div class="toggle"><span class="toggle-label">Avisar nos meus dias de escala</span>
+        <div class="sw ${DB.settings.notify?"on":""}" data-action="toggle-notif"></div></div>
+      <div class="field" style="margin-bottom:0"><label>Quem é você?</label>
+        <select id="cfgMe">
+          <option value="">— não definido —</option>
+          ${DB.members.map(m=>`<option value="${m.id}" ${DB.settings.meId===m.id?"selected":""}>${esc(m.name)}</option>`).join("")}
+        </select>
+        <div class="hint">Defina seu nome para receber o lembrete "você está escalado hoje" ao abrir o app.</div>
+      </div>
+    </div>`;
+
+  // Salas
+  html += `<div class="section-label">Salas <span class="link" data-action="new-room">+ Nova sala</span></div>`;
+  DB.rooms.forEach(r=>{
+    html += `<div class="room list-tap" data-action="edit-room" data-id="${r.id}">
+      <div class="room-ico" style="background:${r.bg};color:${r.fg}">${r.emoji}</div>
+      <div class="room-info"><div class="room-name">${esc(r.name)}</div><div class="room-age">${esc(r.age)} • precisa de ${r.need}</div></div>
+      <svg viewBox="0 0 24 24" style="width:18px;height:18px;fill:none;stroke:var(--ink-faint);stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><path d="M9 18l6-6-6-6"/></svg>
+    </div>`;
+  });
+
+  // Cultos recorrentes
+  html += `<div class="section-label">Cultos da semana <span class="link" data-action="new-service">+ Novo culto</span></div>`;
+  DB.services.forEach(s=>{
+    html += `<div class="room list-tap" data-action="edit-service" data-id="${s.id}">
+      <div class="room-ico" style="background:${s.color}22;color:${s.color}">⛪</div>
+      <div class="room-info"><div class="room-name">${esc(s.name)}</div><div class="room-age">Todo ${WD[s.weekday].toLowerCase()} • ${s.time}</div></div>
+      <svg viewBox="0 0 24 24" style="width:18px;height:18px;fill:none;stroke:var(--ink-faint);stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><path d="M9 18l6-6-6-6"/></svg>
+    </div>`;
+  });
+
+  // Dados / backup
+  html += `<div class="section-label">Dados</div>
+    <div class="btn-row" style="margin:0 0 10px">
+      <button class="btn btn-soft" data-action="export"><svg viewBox="0 0 24 24"><path d="M12 3v12M7 10l5 5 5-5"/><path d="M5 21h14"/></svg> Backup</button>
+      <button class="btn btn-soft" data-action="import"><svg viewBox="0 0 24 24"><path d="M12 15V3M7 8l5-5 5 5"/><path d="M5 21h14"/></svg> Restaurar</button>
+    </div>
+    <button class="btn btn-danger btn-block" data-action="reset">Apagar tudo e recomeçar</button>
+    <input type="file" id="importFile" accept="application/json" hidden>`;
+
+  // Sobre / instalar
+  html += `<div class="section-label">Sobre</div>
+    <div class="card" style="padding:16px">
+      <p class="muted-txt" style="margin:0 0 6px"><b style="color:var(--ink);font-family:var(--font-display)">Escala Kids</b> — feito para o ${esc(DB.settings.dept)} da ${esc(DB.settings.church)}.</p>
+      <p class="muted-txt" style="margin:0">Tudo fica salvo só neste aparelho. No celular, use "Adicionar à tela inicial" para instalar como app.</p>
+    </div>
+    <div class="spacer"></div>`;
+
+  c.innerHTML = html;
+
+  // autosave da identidade
+  ["cfgChurch","cfgDept"].forEach(id=>{
+    const el=document.getElementById(id);
+    el.addEventListener("change",()=>{
+      DB.settings.church = document.getElementById("cfgChurch").value.trim() || "Verbo Casa Caiada";
+      DB.settings.dept = document.getElementById("cfgDept").value.trim() || "Departamento Infantil";
+      save(); toast("Salvo","good");
+    });
+  });
+  document.getElementById("cfgMe").addEventListener("change",e=>{
+    DB.settings.meId = e.target.value; save(); toast(e.target.value?"Pronto! Vamos te lembrar.":"Removido","good");
+  });
+  document.getElementById("importFile").addEventListener("change", handleImportFile);
+}
+
+/* =====================================================================
+   AÇÕES (event delegation)
+   ===================================================================== */
+document.addEventListener("click", e=>{
+  const el = e.target.closest("[data-action]");
+  if(!el) return;
+  const a = el.dataset.action;
+  const id = el.dataset.id;
+  const key = el.dataset.key;
+
+  switch(a){
+    case "goto": go(el.dataset.view); break;
+    case "open-occ": openSchedule(key); break;
+    case "new-schedule": pickOccForSchedule(); break;
+    case "open-member": openMember(id); break;
+    case "new-member": editMember(null); break;
+    case "edit-member": editMember(id); break;
+    case "wa-member": waMember(id); break;
+    case "mfilter": memberFilter=el.dataset.f; go("membros"); break;
+    case "new-room": editRoom(null); break;
+    case "edit-room": editRoom(id); break;
+    case "new-service": editService(null); break;
+    case "edit-service": editService(id); break;
+    case "new-event": editEvent(null, calSelected); break;
+    case "new-event-on": editEvent(null, el.dataset.date); break;
+    case "edit-event": editEvent(id); break;
+    case "sel-day": calSelected=el.dataset.date; go("calendario"); break;
+    case "cal-prev": calMonth--; if(calMonth<0){calMonth=11;calYear--;} go("calendario"); break;
+    case "cal-next": calMonth++; if(calMonth>11){calMonth=0;calYear++;} go("calendario"); break;
+    case "cal-today": { const t=today(); calYear=t.getFullYear(); calMonth=t.getMonth(); calSelected=ymd(t); go("calendario"); } break;
+    case "enable-notif": case "toggle-notif": toggleNotif(); break;
+    case "export": exportData(); break;
+    case "import": document.getElementById("importFile").click(); break;
+    case "reset": confirmReset(); break;
+  }
+});
+
+/* =====================================================================
+   MODAL
+   ===================================================================== */
+function openModal(title, bodyHtml, footHtml){
+  document.getElementById("modalTitle").textContent = title;
+  document.getElementById("modalBody").innerHTML = bodyHtml;
+  document.getElementById("modalFoot").innerHTML = footHtml||"";
+  const bd = document.getElementById("modalBackdrop");
+  bd.hidden = false;
+}
+function closeModal(){ document.getElementById("modalBackdrop").hidden = true; }
+document.getElementById("modalClose").addEventListener("click", closeModal);
+document.getElementById("modalBackdrop").addEventListener("click", e=>{ if(e.target.id==="modalBackdrop") closeModal(); });
+
+/* ---------- Modal: Membro (cadastro/edição) ---------- */
+function editMember(mid){
+  const m = mid ? getMember(mid) : {name:"",phone:"",role:"",roomIds:[],active:true,notes:""};
+  const body = `
+    <div class="field"><label>Nome completo</label><input id="mName" value="${esc(m.name)}" placeholder="Ex.: Ana Beatriz"></div>
+    <div class="row2">
+      <div class="field"><label>WhatsApp</label><input id="mPhone" value="${esc(m.phone)}" placeholder="81 99999-0000" inputmode="tel"></div>
+      <div class="field"><label>Função</label><input id="mRole" value="${esc(m.role)}" placeholder="Tia, Líder, Apoio"></div>
+    </div>
+    <div class="field"><label>Salas que pode atender</label>
+      <div class="pick" id="mRooms">${DB.rooms.map(r=>`<span class="pick-item ${m.roomIds.includes(r.id)?"on":""}" data-room="${r.id}" style="${m.roomIds.includes(r.id)?`background:${r.fg}`:""}"><span class="pk-dot" style="background:${r.fg}"></span>${esc(r.name)}</span>`).join("")}</div>
+    </div>
+    <div class="field"><label>Observações</label><textarea id="mNotes" placeholder="Restrições de horário, preferências...">${esc(m.notes)}</textarea></div>
+    <div class="toggle"><span class="toggle-label">Ativo na equipe</span><div class="sw ${m.active?"on":""}" id="mActive"></div></div>
+  `;
+  const foot = `<button class="btn btn-primary btn-block" id="mSave">${mid?"Salvar alterações":"Cadastrar"}</button>
+    ${mid?`<button class="btn btn-danger btn-block" id="mDelete" style="margin-top:8px">Excluir da equipe</button>`:""}`;
+  openModal(mid?"Editar pessoa":"Nova pessoa", body, foot);
+
+  // interações
+  let selRooms = new Set(m.roomIds);
+  document.getElementById("mRooms").addEventListener("click", e=>{
+    const it=e.target.closest(".pick-item"); if(!it) return;
+    const rid=it.dataset.room; const r=getRoom(rid);
+    if(selRooms.has(rid)){ selRooms.delete(rid); it.classList.remove("on"); it.style.background=""; }
+    else{ selRooms.add(rid); it.classList.add("on"); it.style.background=r.fg; }
+  });
+  let active = m.active;
+  document.getElementById("mActive").addEventListener("click", e=>{ active=!active; e.target.classList.toggle("on",active); });
+
+  document.getElementById("mSave").addEventListener("click", ()=>{
+    const name=document.getElementById("mName").value.trim();
+    if(!name){ toast("Coloque o nome da pessoa","warn"); return; }
+    const data={ name, phone:document.getElementById("mPhone").value.trim(),
+      role:document.getElementById("mRole").value.trim(), roomIds:[...selRooms],
+      notes:document.getElementById("mNotes").value.trim(), active };
+    if(mid){ Object.assign(getMember(mid), data); }
+    else { DB.members.push({id:uid(), ...data}); }
+    save(); closeModal(); go("membros"); toast(mid?"Pessoa atualizada":"Pessoa cadastrada","good");
+  });
+  if(mid) document.getElementById("mDelete").addEventListener("click", ()=>{
+    if(!confirm("Excluir esta pessoa? Ela sairá das escalas futuras.")) return;
+    DB.members = DB.members.filter(x=>x.id!==mid);
+    Object.values(DB.schedules).forEach(s=>Object.keys(s).forEach(rid=>{ s[rid]=s[rid].filter(x=>x!==mid); }));
+    if(DB.settings.meId===mid) DB.settings.meId="";
+    save(); closeModal(); go("membros"); toast("Pessoa removida","good");
+  });
+}
+
+/* ---------- Modal: Ver membro ---------- */
+function openMember(mid){
+  const m=getMember(mid); if(!m) return;
+  const rooms = m.roomIds.map(id=>getRoom(id)).filter(Boolean);
+  const body = `
+    <div style="display:flex;align-items:center;gap:14px;margin-bottom:6px">
+      <div class="ava" style="width:60px;height:60px;font-size:22px;background:${avaColor(m.id)}">${esc(initials(m.name))}</div>
+      <div><div style="font-family:var(--font-display);font-weight:700;font-size:20px">${esc(m.name)}</div>
+      <div class="muted-txt">${esc(m.role||"Voluntário")} ${m.active?"":"• inativo"}</div></div>
+    </div>
+    <div class="divider"></div>
+    ${m.phone?`<div class="field" style="margin-bottom:10px"><label>WhatsApp</label><div style="font-size:15px">${esc(m.phone)}</div></div>`:""}
+    <div class="field" style="margin-bottom:10px"><label>Salas</label>
+      <div class="pick">${rooms.length?rooms.map(r=>`<span class="chip" style="background:${r.bg};color:${r.fg}">${r.emoji} ${esc(r.name)}</span>`).join(""):'<span class="muted-txt">Nenhuma definida</span>'}</div></div>
+    ${m.notes?`<div class="field"><label>Observações</label><div class="muted-txt">${esc(m.notes)}</div></div>`:""}
+  `;
+  const foot = `
+    ${m.phone?`<button class="btn btn-wa btn-block" data-action="wa-member" data-id="${m.id}" style="margin-bottom:8px">
+      <svg viewBox="0 0 24 24"><path d="M21 11.5a8.5 8.5 0 0 1-12.6 7.4L3 21l2.2-5.3A8.5 8.5 0 1 1 21 11.5z"/></svg> Chamar no WhatsApp</button>`:""}
+    <button class="btn btn-ghost btn-block" data-action="edit-member" data-id="${m.id}">Editar</button>`;
+  openModal("Perfil", body, foot);
+}
+
+/* ---------- Modal: Sala ---------- */
+const EMOJIS = ["🍼","🧸","🎨","📚","⚽","🎮","🧩","🎵","⭐","🌈","🦋","🐣"];
+const ROOM_COLORS = [["#EAF4FC","#2E86D6"],["#FFF0E6","#E07B2E"],["#EAF7F0","#239B6E"],["#F1ECFB","#7A5BCC"],["#FDEDF2","#D0497C"],["#FFF6DA","#C9941A"]];
+function editRoom(rid){
+  const r = rid ? getRoom(rid) : {name:"",age:"",emoji:"⭐",bg:ROOM_COLORS[0][0],fg:ROOM_COLORS[0][1],need:2};
+  const body = `
+    <div class="field"><label>Nome da sala</label><input id="rName" value="${esc(r.name)}" placeholder="Ex.: Berçário"></div>
+    <div class="row2">
+      <div class="field"><label>Faixa etária</label><input id="rAge" value="${esc(r.age)}" placeholder="0 a 1 ano"></div>
+      <div class="field"><label>Voluntários necessários</label><input id="rNeed" type="number" min="1" max="20" value="${r.need}"></div>
+    </div>
+    <div class="field"><label>Ícone</label>
+      <div class="pick" id="rEmoji">${EMOJIS.map(em=>`<span class="pick-item ${r.emoji===em?"on":""}" data-em="${em}" style="font-size:18px;${r.emoji===em?"background:var(--sky-500)":""}">${em}</span>`).join("")}</div></div>
+    <div class="field"><label>Cor</label>
+      <div class="pick" id="rColor">${ROOM_COLORS.map((c,i)=>`<span class="pick-item" data-bg="${c[0]}" data-fg="${c[1]}" style="background:${c[0]};border-color:${r.fg===c[1]?c[1]:"var(--line)"};${r.fg===c[1]?"border-width:2.5px":""}"><span class="pk-dot" style="background:${c[1]};width:16px;height:16px"></span></span>`).join("")}</div></div>
+  `;
+  const foot = `<button class="btn btn-primary btn-block" id="rSave">${rid?"Salvar":"Criar sala"}</button>
+    ${rid?`<button class="btn btn-danger btn-block" id="rDelete" style="margin-top:8px">Excluir sala</button>`:""}`;
+  openModal(rid?"Editar sala":"Nova sala", body, foot);
+
+  let em=r.emoji, bg=r.bg, fg=r.fg;
+  document.getElementById("rEmoji").addEventListener("click",e=>{ const it=e.target.closest(".pick-item"); if(!it)return;
+    document.querySelectorAll("#rEmoji .pick-item").forEach(x=>{x.classList.remove("on");x.style.background="";});
+    it.classList.add("on"); it.style.background="var(--sky-500)"; em=it.dataset.em; });
+  document.getElementById("rColor").addEventListener("click",e=>{ const it=e.target.closest(".pick-item"); if(!it)return;
+    document.querySelectorAll("#rColor .pick-item").forEach(x=>{x.style.borderColor="var(--line)";x.style.borderWidth="1.5px";});
+    it.style.borderColor=it.dataset.fg; it.style.borderWidth="2.5px"; bg=it.dataset.bg; fg=it.dataset.fg; });
+
+  document.getElementById("rSave").addEventListener("click",()=>{
+    const name=document.getElementById("rName").value.trim();
+    if(!name){ toast("Dê um nome para a sala","warn"); return; }
+    const data={ name, age:document.getElementById("rAge").value.trim(),
+      need:Math.max(1,parseInt(document.getElementById("rNeed").value)||1), emoji:em, bg, fg };
+    if(rid) Object.assign(getRoom(rid),data); else DB.rooms.push({id:uid(),...data});
+    save(); closeModal(); go(currentView==="config"?"config":"home"); toast(rid?"Sala atualizada":"Sala criada","good");
+  });
+  if(rid) document.getElementById("rDelete").addEventListener("click",()=>{
+    if(!confirm("Excluir esta sala? Ela sairá das escalas.")) return;
+    DB.rooms=DB.rooms.filter(x=>x.id!==rid);
+    DB.members.forEach(m=>m.roomIds=m.roomIds.filter(x=>x!==rid));
+    Object.values(DB.schedules).forEach(s=>delete s[rid]);
+    save(); closeModal(); go("config"); toast("Sala removida","good");
+  });
+}
+
+/* ---------- Modal: Culto recorrente ---------- */
+function editService(sid){
+  const s = sid ? getService(sid) : {name:"",weekday:0,time:"09:00",color:"#4DA3E8"};
+  const body = `
+    <div class="field"><label>Nome do culto</label><input id="sName" value="${esc(s.name)}" placeholder="Ex.: Culto da Família"></div>
+    <div class="row2">
+      <div class="field"><label>Dia da semana</label><select id="sWd">${WD.map((w,i)=>`<option value="${i}" ${s.weekday===i?"selected":""}>${w}</option>`).join("")}</select></div>
+      <div class="field"><label>Horário</label><input id="sTime" type="time" value="${s.time}"></div>
+    </div>
+    <div class="hint" style="margin-bottom:4px">Cultos recorrentes aparecem automaticamente na agenda toda semana.</div>
+  `;
+  const foot = `<button class="btn btn-primary btn-block" id="sSave">${sid?"Salvar":"Criar culto"}</button>
+    ${sid?`<button class="btn btn-danger btn-block" id="sDelete" style="margin-top:8px">Excluir</button>`:""}`;
+  openModal(sid?"Editar culto":"Novo culto da semana", body, foot);
+
+  document.getElementById("sSave").addEventListener("click",()=>{
+    const name=document.getElementById("sName").value.trim();
+    if(!name){ toast("Dê um nome ao culto","warn"); return; }
+    const data={ name, weekday:parseInt(document.getElementById("sWd").value),
+      time:document.getElementById("sTime").value, color:s.color||"#4DA3E8" };
+    if(sid) Object.assign(getService(sid),data); else DB.services.push({id:uid(),...data});
+    save(); closeModal(); go("config"); toast(sid?"Atualizado":"Culto criado","good");
+  });
+  if(sid) document.getElementById("sDelete").addEventListener("click",()=>{
+    if(!confirm("Excluir este culto recorrente?")) return;
+    DB.services=DB.services.filter(x=>x.id!==sid); save(); closeModal(); go("config"); toast("Removido","good");
+  });
+}
+
+/* ---------- Modal: Evento pontual ---------- */
+function editEvent(eid, presetDate){
+  const ev = eid ? DB.events.find(e=>e.id===eid) : {title:"",date:presetDate||ymd(today()),time:"",note:""};
+  const body = `
+    <div class="field"><label>Nome do evento</label><input id="eTitle" value="${esc(ev.title)}" placeholder="Ex.: Ensaio do teatro, Festa das crianças"></div>
+    <div class="row2">
+      <div class="field"><label>Data</label><input id="eDate" type="date" value="${ev.date}"></div>
+      <div class="field"><label>Horário</label><input id="eTime" type="time" value="${ev.time||""}"></div>
+    </div>
+    <div class="field"><label>Detalhes</label><textarea id="eNote" placeholder="Local, instruções...">${esc(ev.note||"")}</textarea></div>
+  `;
+  const foot = `<button class="btn btn-primary btn-block" id="eSave">${eid?"Salvar":"Criar evento"}</button>
+    ${eid?`<button class="btn btn-danger btn-block" id="eDelete" style="margin-top:8px">Excluir evento</button>`:""}`;
+  openModal(eid?"Editar evento":"Novo evento", body, foot);
+
+  document.getElementById("eSave").addEventListener("click",()=>{
+    const title=document.getElementById("eTitle").value.trim();
+    const date=document.getElementById("eDate").value;
+    if(!title){ toast("Dê um nome ao evento","warn"); return; }
+    if(!date){ toast("Escolha a data","warn"); return; }
+    const data={ title, date, time:document.getElementById("eTime").value, note:document.getElementById("eNote").value.trim() };
+    if(eid) Object.assign(DB.events.find(e=>e.id===eid),data); else DB.events.push({id:uid(),...data});
+    calSelected=date; save(); closeModal(); go("calendario"); toast(eid?"Evento atualizado":"Evento criado","good");
+  });
+  if(eid) document.getElementById("eDelete").addEventListener("click",()=>{
+    if(!confirm("Excluir este evento?")) return;
+    DB.events=DB.events.filter(e=>e.id!==eid); delete DB.schedules[`e:${eid}`];
+    save(); closeModal(); go("calendario"); toast("Evento removido","good");
+  });
+}
+
+/* ---------- Escolher culto/evento para montar escala ---------- */
+function pickOccForSchedule(){
+  const occs = upcomingOccs(28);
+  if(!occs.length){ toast("Cadastre cultos na aba Agenda primeiro","warn"); return; }
+  const body = `<p class="muted-txt" style="margin:0 0 12px">Para qual culto ou evento?</p>
+    ${occs.map(o=>`<div class="sched-room list-tap" data-pick-occ="${o.key}" style="border-left:4px solid ${o.color};cursor:pointer">
+      <div class="room-ico" style="background:${o.color}22;color:${o.color}">${o.type==="evento"?"🎉":"⛪"}</div>
+      <div class="sched-room-names"><div class="sched-room-title">${esc(o.title)}</div>${fmtShort(o.date)} ${o.time?"• "+o.time:""}</div>
+      <svg viewBox="0 0 24 24" style="width:18px;height:18px;fill:none;stroke:var(--ink-faint);stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><path d="M9 18l6-6-6-6"/></svg>
+    </div>`).join("")}`;
+  openModal("Montar escala", body, "");
+  document.getElementById("modalBody").querySelectorAll("[data-pick-occ]").forEach(el=>{
+    el.addEventListener("click",()=>{ closeModal(); setTimeout(()=>openSchedule(el.dataset.pickOcc),200); });
+  });
+}
+
+/* ---------- Modal: Montar/Ver escala de uma ocorrência ---------- */
+function openSchedule(key){
+  const occ = resolveOcc(key);
+  if(!occ){ toast("Não encontrei este culto","warn"); return; }
+  const sched = JSON.parse(JSON.stringify(schedFor(key))); // cópia editável
+
+  function renderBody(){
+    return DB.rooms.map(r=>{
+      const assigned = sched[r.id]||[];
+      const enough = assigned.length>=r.need;
+      return `<div class="card" style="padding:13px;margin-bottom:11px">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+          <div class="room-ico" style="width:38px;height:38px;border-radius:11px;font-size:18px;background:${r.bg};color:${r.fg}">${r.emoji}</div>
+          <div style="flex:1"><div class="room-name" style="font-size:14.5px">${esc(r.name)}</div>
+            <div class="room-age">${assigned.length}/${r.need} ${enough?"✓":""}</div></div>
+        </div>
+        <div class="pick" data-room-pick="${r.id}">
+          ${DB.members.filter(m=>m.active).filter(m=>m.roomIds.length===0||m.roomIds.includes(r.id)).sort((a,b)=>a.name.localeCompare(b.name,"pt"))
+            .map(m=>{ const on=assigned.includes(m.id);
+              return `<span class="pick-item ${on?"on":""}" data-mid="${m.id}" style="${on?`background:${r.fg}`:""}">${esc(m.name.split(" ")[0])}${m.name.split(" ")[1]?" "+m.name.split(" ")[1][0]+".":""}</span>`;
+            }).join("") || '<span class="muted-txt">Ninguém apto a esta sala</span>'}
+        </div>
+      </div>`;
+    }).join("");
+  }
+
+  const head = `<div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+    <div class="room-ico" style="width:42px;height:42px;border-radius:12px;background:${occ.color}22;color:${occ.color}">${occ.type==="evento"?"🎉":"⛪"}</div>
+    <div><div style="font-family:var(--font-display);font-weight:700;font-size:16px">${esc(occ.title)}</div>
+    <div class="muted-txt">${fmtLong(occ.date)} ${occ.time?"• "+occ.time:""}</div></div></div>`;
+
+  openModal("Escala do culto", head + `<div id="schedRooms">${renderBody()}</div>`,
+    `<button class="btn btn-wa btn-block" id="schedWa" style="margin-bottom:8px">
+       <svg viewBox="0 0 24 24"><path d="M21 11.5a8.5 8.5 0 0 1-12.6 7.4L3 21l2.2-5.3A8.5 8.5 0 1 1 21 11.5z"/></svg> Avisar escalados no WhatsApp</button>
+     <button class="btn btn-primary btn-block" id="schedSave">Salvar escala</button>`);
+
+  document.getElementById("schedRooms").addEventListener("click", e=>{
+    const it=e.target.closest(".pick-item"); if(!it) return;
+    const wrap=it.closest("[data-room-pick]"); const rid=wrap.dataset.roomPick; const mid=it.dataset.mid;
+    const r=getRoom(rid); sched[rid]=sched[rid]||[];
+    if(sched[rid].includes(mid)){ sched[rid]=sched[rid].filter(x=>x!==mid); it.classList.remove("on"); it.style.background=""; }
+    else{ sched[rid].push(mid); it.classList.add("on"); it.style.background=r.fg; }
+    // atualiza contador
+    const head=wrap.previousElementSibling.querySelector(".room-age");
+    if(head) head.textContent = `${sched[rid].length}/${r.need} ${sched[rid].length>=r.need?"✓":""}`;
+  });
+
+  document.getElementById("schedSave").addEventListener("click",()=>{
+    Object.keys(sched).forEach(rid=>{ if(!sched[rid].length) delete sched[rid]; });
+    DB.schedules[key]=sched; save(); closeModal(); go(currentView); toast("Escala salva","good");
+  });
+
+  document.getElementById("schedWa").addEventListener("click",()=>{
+    // salva antes de avisar
+    Object.keys(sched).forEach(rid=>{ if(!sched[rid].length) delete sched[rid]; });
+    DB.schedules[key]=sched; save();
+    waSchedule(key, occ);
+  });
+}
+
+function resolveOcc(key){
+  if(key.startsWith("e:")){ const ev=DB.events.find(e=>e.id===key.slice(2)); if(!ev) return null;
+    return {key,date:ev.date,title:ev.title,time:ev.time,color:"#F2994A",type:"evento"}; }
+  if(key.startsWith("s:")){ const [,sid,date]=key.split(":"); const s=getService(sid); if(!s) return null;
+    return {key,date,title:s.name,time:s.time,color:s.color,type:"culto"}; }
+  return null;
+}
+
+/* =====================================================================
+   WHATSAPP
+   ===================================================================== */
+function waMember(mid){
+  const m=getMember(mid); if(!m) return;
+  if(!m.phone){ toast("Esta pessoa não tem WhatsApp cadastrado","warn"); return; }
+  const msg = `Oi ${m.name.split(" ")[0]}! Tudo bem? Mensagem do ${DB.settings.dept} da ${DB.settings.church}. 💙`;
+  window.open(`https://wa.me/${cleanPhone(m.phone)}?text=${encodeURIComponent(msg)}`,"_blank");
+}
+function waSchedule(key, occ){
+  const sched=schedFor(key);
+  const people=[];
+  Object.keys(sched).forEach(rid=>{ const r=getRoom(rid);
+    sched[rid].forEach(mid=>{ const m=getMember(mid); if(m&&m.phone) people.push({m,r}); }); });
+  if(!people.length){ toast("Ninguém com WhatsApp nesta escala","warn"); return; }
+  // modal com botões por pessoa
+  const body = `<p class="muted-txt" style="margin:0 0 12px">Toque para abrir o WhatsApp de cada pessoa com a mensagem pronta.</p>
+    ${people.map(({m,r})=>`<div class="person">
+      ${ava(m.name,m.id)}
+      <div class="person-info"><div class="person-name">${esc(m.name)}</div><div class="person-meta">${r.emoji} ${esc(r.name)}</div></div>
+      <button class="btn btn-wa" data-wa-one="${m.id}" data-room="${r.id}" style="padding:9px 13px;font-size:13px">
+        <svg viewBox="0 0 24 24"><path d="M21 11.5a8.5 8.5 0 0 1-12.6 7.4L3 21l2.2-5.3A8.5 8.5 0 1 1 21 11.5z"/></svg> Avisar</button>
+    </div>`).join("")}`;
+  openModal("Avisar escalados", body, "");
+  document.getElementById("modalBody").querySelectorAll("[data-wa-one]").forEach(btn=>{
+    btn.addEventListener("click",()=>{
+      const m=getMember(btn.dataset.waOne); const r=getRoom(btn.dataset.room);
+      const msg = `Oi ${m.name.split(" ")[0]}! 💙 Lembrete da escala do ${DB.settings.dept}:\n\n📅 ${fmtLong(occ.date)}\n⛪ ${occ.title}${occ.time?" às "+occ.time:""}\n🚪 Sala: ${r.name}\n\nConto com você! Deus abençoe.`;
+      window.open(`https://wa.me/${cleanPhone(m.phone)}?text=${encodeURIComponent(msg)}`,"_blank");
+    });
+  });
+}
+
+/* =====================================================================
+   NOTIFICAÇÕES
+   ===================================================================== */
+async function toggleNotif(){
+  if(!("Notification" in window)){ toast("Este aparelho não suporta notificações","warn"); return; }
+  if(DB.settings.notify){ DB.settings.notify=false; save(); go(currentView); toast("Lembretes desativados"); return; }
+  let perm = Notification.permission;
+  if(perm!=="granted") perm = await Notification.requestPermission();
+  if(perm==="granted"){ DB.settings.notify=true; save(); go(currentView);
+    toast("Pronto! Você será lembrado nos seus dias.","good"); checkTodayReminder(true); }
+  else toast("Permissão de notificação negada no navegador","warn");
+}
+function checkTodayReminder(force){
+  if(!DB.settings.notify || !DB.settings.meId) return;
+  if(Notification.permission!=="granted") return;
+  const me=getMember(DB.settings.meId); if(!me) return;
+  const occs=occsOnDate(ymd(today()));
+  const mine=[];
+  occs.forEach(o=>{ const s=schedFor(o.key);
+    Object.keys(s).forEach(rid=>{ if(s[rid].includes(me.id)){ const r=getRoom(rid); mine.push(`${o.title} • ${r?r.name:""}`); } }); });
+  if(!mine.length) return;
+  const flag = "notif-"+ymd(today());
+  if(!force && localStorage.getItem(flag)) return;
+  localStorage.setItem(flag,"1");
+  try{
+    new Notification("Você está escalado hoje! 💙", { body: mine.join("\n"), icon:"icon-192.png", badge:"icon-192.png" });
+  }catch(e){}
+}
+
+/* =====================================================================
+   BACKUP / RESTAURAR / RESET
+   ===================================================================== */
+function exportData(){
+  const blob=new Blob([JSON.stringify(DB,null,2)],{type:"application/json"});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement("a"); a.href=url;
+  a.download=`escala-kids-backup-${ymd(today())}.json`; a.click();
+  URL.revokeObjectURL(url); toast("Backup salvo","good");
+}
+function handleImportFile(e){
+  const file=e.target.files[0]; if(!file) return;
+  const rd=new FileReader();
+  rd.onload=()=>{ try{ const data=JSON.parse(rd.result);
+      if(!data.rooms||!data.members) throw 0;
+      DB=data; save(); go("home"); toast("Dados restaurados","good");
+    }catch(err){ toast("Arquivo inválido","warn"); } };
+  rd.readAsText(file); e.target.value="";
+}
+function confirmReset(){
+  if(!confirm("Isso apaga TODOS os dados (equipe, salas, escalas). Tem certeza?")) return;
+  if(!confirm("Confirma mesmo? Não dá para desfazer.")) return;
+  localStorage.removeItem(STORE_KEY); DB=seed(); save(); go("home"); toast("Tudo recomeçado","good");
+}
+
+/* =====================================================================
+   EMPTY STATE helper
+   ===================================================================== */
+function emptyState(emoji,title,text,btn){
+  return `<div class="empty"><div class="empty-emoji">${emoji}</div><h3>${title}</h3><p>${text}</p>${btn||""}</div>`;
+}
+
+/* =====================================================================
+   TOAST
+   ===================================================================== */
+let toastT;
+function toast(msg,type){
+  const el=document.getElementById("toast");
+  el.textContent=msg; el.className="toast"+(type?" "+type:""); el.hidden=false;
+  requestAnimationFrame(()=>el.classList.add("show"));
+  clearTimeout(toastT);
+  toastT=setTimeout(()=>{ el.classList.remove("show"); setTimeout(()=>el.hidden=true,260); },2600);
+}
+
+/* =====================================================================
+   INIT
+   ===================================================================== */
+go("home");
+checkTodayReminder(false);
+
+/* Versão arquivo único: sem service worker (rode pela versão hospedada para offline/instalar) */
+
+  </script>
+</body>
+</html>
