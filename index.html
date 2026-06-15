@@ -463,8 +463,8 @@ h1,h2,h3{font-family:var(--font-display);font-weight:700;margin:0;color:var(--in
       tiver role 'leader'/'admin' na tabela profiles.
    Enquanto estiver em branco, o app roda em "modo de teste" local.
    =========================================================== */
-const SUPABASE_URL = "https://husczactaysmrynfnrwe.supabase.co/rest/v1/";        // ex.: "https://xxxx.supabase.co"
-const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh1c2N6YWN0YXlzbXJ5bmZucndlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk5NTk1NjgsImV4cCI6MjA5NTUzNTU2OH0.WvNp2HPdNk-DzKC3WPc7ntJssNrE4A5xtwl8Rl7qYd4";   // ex.: "eyJhbGciOi..."
+const SUPABASE_URL = "https://husczactaysmrynfnrwe.supabase.co";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh1c2N6YWN0YXlzbXJ5bmZucndlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk5NTk1NjgsImV4cCI6MjA5NTUzNTU2OH0.WvNp2HPdNk-DzKC3WPc7ntJssNrE4A5xtwl8Rl7qYd4";
 const USE_SUPABASE = !!(SUPABASE_URL && SUPABASE_ANON_KEY && window.supabase);
 const sb = USE_SUPABASE ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
 
@@ -535,6 +535,126 @@ function traduzErroAuth(msg){
   return msg;
 }
 
+/* ===========================================================
+   CAMADA DE DADOS — Supabase (nuvem) ou localStorage (teste)
+   Quando o Supabase está configurado, tudo é lido/gravado nas
+   tabelas. Sem ele, cai no modo local (localStorage).
+   =========================================================== */
+const CLOUD = USE_SUPABASE;
+
+async function sbErr(promise, ctx){
+  const { data, error } = await promise;
+  if(error) throw new Error((ctx?ctx+": ":"")+(error.message||"erro"));
+  return data;
+}
+
+const Data = {
+  async loadAll(){
+    const [rooms, services, events, members, mrooms, assigns] = await Promise.all([
+      sb.from("rooms").select("*"),
+      sb.from("services").select("*"),
+      sb.from("events").select("*"),
+      sb.from("members").select("*"),
+      sb.from("member_rooms").select("*"),
+      sb.from("assignments").select("*"),
+    ]);
+    for(const r of [rooms,services,events,members,mrooms,assigns]) if(r.error) throw new Error(r.error.message);
+
+    DB.rooms = (rooms.data||[]).map(r=>({id:r.id,name:r.name,age:r.age||"",emoji:r.emoji||"⭐",bg:r.bg||"#EAF4FC",fg:r.fg||"#2E86D6",need:3,sort:r.sort||0}))
+      .sort((a,b)=>(a.sort||0)-(b.sort||0));
+    DB.services = (services.data||[]).map(s=>({id:s.id,name:s.name,weekday:s.weekday,time:s.time||"",color:s.color||"#4DA3E8"}));
+    DB.events = (events.data||[]).map(e=>({id:e.id,date:e.date,title:e.title,time:e.time||"",note:e.note||""}));
+    const byMember={};
+    (mrooms.data||[]).forEach(mr=>{ (byMember[mr.member_id]=byMember[mr.member_id]||[]).push(mr.room_id); });
+    DB.members = (members.data||[]).map(m=>({id:m.id,name:m.full_name,phone:m.phone||"",role:m.fn||"",roomIds:byMember[m.id]||[],active:m.active!==false,notes:m.notes||""}));
+    const sched={};
+    (assigns.data||[]).forEach(a=>{
+      const key = a.source_type==="event" ? `e:${a.source_id}` : `s:${a.source_id}:${a.occ_date}`;
+      sched[key]=sched[key]||{};
+      sched[key][a.room_id]=sched[key][a.room_id]||{lider:null,monitores:[]};
+      if(a.role_in_room==="leader") sched[key][a.room_id].lider=a.member_id;
+      else sched[key][a.room_id].monitores.push(a.member_id);
+    });
+    DB.schedules = sched;
+    save();
+    if(!DB.rooms.length && Auth.isLeader()) await this.seedDefaults();
+  },
+
+  async seedDefaults(){
+    const s = seed();
+    await sbErr(sb.from("rooms").insert(s.rooms.map((r,i)=>({id:r.id,name:r.name,age:r.age,emoji:r.emoji,bg:r.bg,fg:r.fg,need:3,sort:i}))), "popular salas");
+    await sbErr(sb.from("services").insert(s.services.map(x=>({id:x.id,name:x.name,weekday:x.weekday,time:x.time,color:x.color}))), "popular cultos");
+    DB.rooms=s.rooms; DB.services=s.services; DB.events=[]; DB.members=[]; DB.schedules={}; save();
+  },
+
+  async saveMember(m, isNew){
+    if(CLOUD){
+      const row={ id:m.id, full_name:m.name, phone:m.phone||null, fn:m.role||null, active:m.active, notes:m.notes||null };
+      if(isNew) await sbErr(sb.from("members").insert(row), "criar pessoa");
+      else      await sbErr(sb.from("members").update(row).eq("id",m.id), "salvar pessoa");
+      await sbErr(sb.from("member_rooms").delete().eq("member_id",m.id), "atualizar salas");
+      if(m.roomIds.length) await sbErr(sb.from("member_rooms").insert(m.roomIds.map(rid=>({member_id:m.id,room_id:rid}))), "atualizar salas");
+    }
+    if(isNew) DB.members.push(m); else Object.assign(getMember(m.id), m);
+    save();
+  },
+  async deleteMember(id){
+    if(CLOUD) await sbErr(sb.from("members").delete().eq("id",id), "excluir pessoa");
+    DB.members = DB.members.filter(x=>x.id!==id);
+    Object.values(DB.schedules).forEach(s=>Object.keys(s).forEach(rid=>{ const v=s[rid];
+      if(v&&typeof v==="object"){ if(v.lider===id) v.lider=null; v.monitores=(v.monitores||[]).filter(x=>x!==id);} }));
+    if(DB.settings.meId===id) DB.settings.meId="";
+    save();
+  },
+
+  async saveRoom(r, isNew){
+    if(CLOUD){ const row={id:r.id,name:r.name,age:r.age||null,emoji:r.emoji,bg:r.bg,fg:r.fg,need:3};
+      if(isNew) await sbErr(sb.from("rooms").insert(row),"criar sala"); else await sbErr(sb.from("rooms").update(row).eq("id",r.id),"salvar sala"); }
+    if(isNew) DB.rooms.push(r); else Object.assign(getRoom(r.id), r); save();
+  },
+  async deleteRoom(id){
+    if(CLOUD) await sbErr(sb.from("rooms").delete().eq("id",id),"excluir sala");
+    DB.rooms=DB.rooms.filter(x=>x.id!==id);
+    DB.members.forEach(m=>m.roomIds=m.roomIds.filter(x=>x!==id));
+    Object.values(DB.schedules).forEach(s=>delete s[id]); save();
+  },
+
+  async saveService(s, isNew){
+    if(CLOUD){ const row={id:s.id,name:s.name,weekday:s.weekday,time:s.time,color:s.color};
+      if(isNew) await sbErr(sb.from("services").insert(row),"criar culto"); else await sbErr(sb.from("services").update(row).eq("id",s.id),"salvar culto"); }
+    if(isNew) DB.services.push(s); else Object.assign(getService(s.id), s); save();
+  },
+  async deleteService(id){
+    if(CLOUD) await sbErr(sb.from("services").delete().eq("id",id),"excluir culto");
+    DB.services=DB.services.filter(x=>x.id!==id); save();
+  },
+
+  async saveEvent(e, isNew){
+    if(CLOUD){ const row={id:e.id,date:e.date,title:e.title,time:e.time||null,note:e.note||null};
+      if(isNew) await sbErr(sb.from("events").insert(row),"criar evento"); else await sbErr(sb.from("events").update(row).eq("id",e.id),"salvar evento"); }
+    if(isNew) DB.events.push(e); else Object.assign(DB.events.find(x=>x.id===e.id), e); save();
+  },
+  async deleteEvent(id){
+    if(CLOUD) await sbErr(sb.from("events").delete().eq("id",id),"excluir evento");
+    DB.events=DB.events.filter(x=>x.id!==id); delete DB.schedules[`e:${id}`]; save();
+  },
+
+  async saveSchedule(key, occ, sched){
+    DB.schedules[key]=sched; save();
+    if(!CLOUD) return;
+    const st  = occ.type==="evento" ? "event" : "service";
+    const sid = key.startsWith("e:") ? key.slice(2) : key.split(":")[1];
+    const date= occ.date;
+    await sbErr(sb.from("assignments").delete().eq("source_type",st).eq("source_id",sid).eq("occ_date",date), "atualizar escala");
+    const rows=[];
+    Object.keys(sched).forEach(rid=>{ const slot=sched[rid];
+      if(slot.lider) rows.push({occ_date:date,source_type:st,source_id:sid,room_id:rid,member_id:slot.lider,role_in_room:"leader"});
+      (slot.monitores||[]).forEach(mid=>rows.push({occ_date:date,source_type:st,source_id:sid,room_id:rid,member_id:mid,role_in_room:"monitor"}));
+    });
+    if(rows.length) await sbErr(sb.from("assignments").insert(rows), "salvar escala");
+  }
+};
+
 /* ---------------- Persistência ---------------- */
 const STORE_KEY = "escala-kids-v1";
 let DB = load();
@@ -572,7 +692,12 @@ function save(){
     toast("Não consegui salvar. Espaço do navegador cheio?", "warn");
   }
 }
-function uid(){ return Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
+function uid(){
+  if(window.crypto && crypto.randomUUID) return crypto.randomUUID();
+  // fallback simples (também no formato uuid)
+  return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g,c=>{
+    const r=Math.random()*16|0, v=c==="x"?r:(r&0x3|0x8); return v.toString(16); });
+}
 
 /* ---------------- Dados iniciais ---------------- */
 function seed(){
@@ -1209,26 +1334,21 @@ function editMember(mid){
   let active = m.active;
   document.getElementById("mActive").addEventListener("click", e=>{ active=!active; e.target.classList.toggle("on",active); });
 
-  document.getElementById("mSave").addEventListener("click", ()=>{
+  document.getElementById("mSave").addEventListener("click", async ()=>{
     const name=document.getElementById("mName").value.trim();
     if(!name){ toast("Coloque o nome da pessoa","warn"); return; }
     const data={ name, phone:document.getElementById("mPhone").value.trim(),
       role:document.getElementById("mRole").value.trim(), roomIds:[...selRooms],
       notes:document.getElementById("mNotes").value.trim(), active };
-    if(mid){ Object.assign(getMember(mid), data); }
-    else { DB.members.push({id:uid(), ...data}); }
-    save(); closeModal(); go("membros"); toast(mid?"Pessoa atualizada":"Pessoa cadastrada","good");
+    const member = mid ? {id:mid,...data} : {id:uid(),...data};
+    const btn=document.getElementById("mSave"); btn.disabled=true; const o=btn.textContent; btn.textContent="Salvando...";
+    try{ await Data.saveMember(member, !mid); closeModal(); go("membros"); toast(mid?"Pessoa atualizada":"Pessoa cadastrada","good"); }
+    catch(e){ btn.disabled=false; btn.textContent=o; toast("Não salvou — "+e.message,"warn"); }
   });
-  if(mid) document.getElementById("mDelete").addEventListener("click", ()=>{
+  if(mid) document.getElementById("mDelete").addEventListener("click", async ()=>{
     if(!confirm("Excluir esta pessoa? Ela sairá das escalas futuras.")) return;
-    DB.members = DB.members.filter(x=>x.id!==mid);
-    Object.values(DB.schedules).forEach(s=>Object.keys(s).forEach(rid=>{
-      const v=s[rid];
-      if(Array.isArray(v)){ s[rid]=v.filter(x=>x!==mid); }
-      else if(v&&typeof v==="object"){ if(v.lider===mid) v.lider=null; v.monitores=(v.monitores||[]).filter(x=>x!==mid); }
-    }));
-    if(DB.settings.meId===mid) DB.settings.meId="";
-    save(); closeModal(); go("membros"); toast("Pessoa removida","good");
+    try{ await Data.deleteMember(mid); closeModal(); go("membros"); toast("Pessoa removida","good"); }
+    catch(e){ toast("Não removeu — "+e.message,"warn"); }
   });
 }
 
@@ -1286,20 +1406,18 @@ function editRoom(rid){
     document.querySelectorAll("#rColor .pick-item").forEach(x=>{x.style.borderColor="var(--line)";x.style.borderWidth="1.5px";});
     it.style.borderColor=it.dataset.fg; it.style.borderWidth="2.5px"; bg=it.dataset.bg; fg=it.dataset.fg; });
 
-  document.getElementById("rSave").addEventListener("click",()=>{
+  document.getElementById("rSave").addEventListener("click", async ()=>{
     const name=document.getElementById("rName").value.trim();
     if(!name){ toast("Dê um nome para a sala","warn"); return; }
-    const data={ name, age:document.getElementById("rAge").value.trim(),
-      need:3, emoji:em, bg, fg };
-    if(rid) Object.assign(getRoom(rid),data); else DB.rooms.push({id:uid(),...data});
-    save(); closeModal(); go(currentView==="config"?"config":"home"); toast(rid?"Sala atualizada":"Sala criada","good");
+    const data={ name, age:document.getElementById("rAge").value.trim(), need:3, emoji:em, bg, fg };
+    const room = rid ? {id:rid,...data} : {id:uid(),...data};
+    try{ await Data.saveRoom(room, !rid); closeModal(); go(currentView==="config"?"config":"home"); toast(rid?"Sala atualizada":"Sala criada","good"); }
+    catch(e){ toast("Não salvou — "+e.message,"warn"); }
   });
-  if(rid) document.getElementById("rDelete").addEventListener("click",()=>{
+  if(rid) document.getElementById("rDelete").addEventListener("click", async ()=>{
     if(!confirm("Excluir esta sala? Ela sairá das escalas.")) return;
-    DB.rooms=DB.rooms.filter(x=>x.id!==rid);
-    DB.members.forEach(m=>m.roomIds=m.roomIds.filter(x=>x!==rid));
-    Object.values(DB.schedules).forEach(s=>delete s[rid]);
-    save(); closeModal(); go("config"); toast("Sala removida","good");
+    try{ await Data.deleteRoom(rid); closeModal(); go("config"); toast("Sala removida","good"); }
+    catch(e){ toast("Não removeu — "+e.message,"warn"); }
   });
 }
 
@@ -1318,17 +1436,19 @@ function editService(sid){
     ${sid?`<button class="btn btn-danger btn-block" id="sDelete" style="margin-top:8px">Excluir</button>`:""}`;
   openModal(sid?"Editar culto":"Novo culto da semana", body, foot);
 
-  document.getElementById("sSave").addEventListener("click",()=>{
+  document.getElementById("sSave").addEventListener("click", async ()=>{
     const name=document.getElementById("sName").value.trim();
     if(!name){ toast("Dê um nome ao culto","warn"); return; }
     const data={ name, weekday:parseInt(document.getElementById("sWd").value),
       time:document.getElementById("sTime").value, color:s.color||"#4DA3E8" };
-    if(sid) Object.assign(getService(sid),data); else DB.services.push({id:uid(),...data});
-    save(); closeModal(); go("config"); toast(sid?"Atualizado":"Culto criado","good");
+    const svc = sid ? {id:sid,...data} : {id:uid(),...data};
+    try{ await Data.saveService(svc, !sid); closeModal(); go("config"); toast(sid?"Atualizado":"Culto criado","good"); }
+    catch(e){ toast("Não salvou — "+e.message,"warn"); }
   });
-  if(sid) document.getElementById("sDelete").addEventListener("click",()=>{
+  if(sid) document.getElementById("sDelete").addEventListener("click", async ()=>{
     if(!confirm("Excluir este culto recorrente?")) return;
-    DB.services=DB.services.filter(x=>x.id!==sid); save(); closeModal(); go("config"); toast("Removido","good");
+    try{ await Data.deleteService(sid); closeModal(); go("config"); toast("Removido","good"); }
+    catch(e){ toast("Não removeu — "+e.message,"warn"); }
   });
 }
 
@@ -1347,19 +1467,21 @@ function editEvent(eid, presetDate){
     ${eid?`<button class="btn btn-danger btn-block" id="eDelete" style="margin-top:8px">Excluir evento</button>`:""}`;
   openModal(eid?"Editar evento":"Novo evento", body, foot);
 
-  document.getElementById("eSave").addEventListener("click",()=>{
+  document.getElementById("eSave").addEventListener("click", async ()=>{
     const title=document.getElementById("eTitle").value.trim();
     const date=document.getElementById("eDate").value;
     if(!title){ toast("Dê um nome ao evento","warn"); return; }
     if(!date){ toast("Escolha a data","warn"); return; }
     const data={ title, date, time:document.getElementById("eTime").value, note:document.getElementById("eNote").value.trim() };
-    if(eid) Object.assign(DB.events.find(e=>e.id===eid),data); else DB.events.push({id:uid(),...data});
-    calSelected=date; save(); closeModal(); go("calendario"); toast(eid?"Evento atualizado":"Evento criado","good");
+    const evt = eid ? {id:eid,...data} : {id:uid(),...data};
+    calSelected=date;
+    try{ await Data.saveEvent(evt, !eid); closeModal(); go("calendario"); toast(eid?"Evento atualizado":"Evento criado","good"); }
+    catch(e){ toast("Não salvou — "+e.message,"warn"); }
   });
-  if(eid) document.getElementById("eDelete").addEventListener("click",()=>{
+  if(eid) document.getElementById("eDelete").addEventListener("click", async ()=>{
     if(!confirm("Excluir este evento?")) return;
-    DB.events=DB.events.filter(e=>e.id!==eid); delete DB.schedules[`e:${eid}`];
-    save(); closeModal(); go("calendario"); toast("Evento removido","good");
+    try{ await Data.deleteEvent(eid); closeModal(); go("calendario"); toast("Evento removido","good"); }
+    catch(e){ toast("Não removeu — "+e.message,"warn"); }
   });
 }
 
@@ -1448,14 +1570,19 @@ function openSchedule(key){
     paint();
   });
 
-  function commit(){
+  async function commit(){
     Object.keys(sched).forEach(rid=>{ const s=sched[rid]; if(!s.lider && !s.monitores.length) delete sched[rid]; });
-    DB.schedules[key]=sched; save();
+    await Data.saveSchedule(key, occ, sched);
   }
-  document.getElementById("schedSave").addEventListener("click",()=>{
-    commit(); closeModal(); go(currentView); toast("Escala salva","good");
+  document.getElementById("schedSave").addEventListener("click", async ()=>{
+    const btn=document.getElementById("schedSave"); btn.disabled=true; const o=btn.textContent; btn.textContent="Salvando...";
+    try{ await commit(); closeModal(); go(currentView); toast("Escala salva","good"); }
+    catch(e){ btn.disabled=false; btn.textContent=o; toast("Não salvou — "+e.message,"warn"); }
   });
-  document.getElementById("schedWa").addEventListener("click",()=>{ commit(); waSchedule(key, occ); });
+  document.getElementById("schedWa").addEventListener("click", async ()=>{
+    try{ await commit(); }catch(e){ toast("Não salvou — "+e.message,"warn"); return; }
+    waSchedule(key, occ);
+  });
 }
 
 function openScheduleReadOnly(key, occ){
@@ -1674,6 +1801,13 @@ function hideLogin(){
   if(lg) lg.hidden=true; if(ap) ap.hidden=false;
 }
 function startApp(){ go("home"); checkTodayReminder(false); }
+async function enterApp(){
+  if(CLOUD){
+    try{ await Data.loadAll(); }
+    catch(e){ toast("Erro ao carregar do Supabase. Você rodou o supabase-schema.sql? ("+e.message+")","warn"); }
+  }
+  hideLogin(); startApp();
+}
 async function doLogout(){
   await Auth.signOut();
   const e=document.getElementById("loginEmail"), p=document.getElementById("loginPass");
@@ -1692,7 +1826,7 @@ function wireLogin(){
     btn.disabled=true; const orig=btn.textContent; btn.textContent="Entrando...";
     try{
       await Auth.signIn(email.value.trim(), pass.value);
-      hideLogin(); startApp();
+      await enterApp();
     }catch(e){ err.textContent = e.message || "Não foi possível entrar."; }
     finally{ btn.disabled=false; btn.textContent=orig; }
   }
@@ -1707,7 +1841,7 @@ function wireLogin(){
 (async function init(){
   wireLogin();
   await Auth.init();
-  if(Auth.user){ hideLogin(); startApp(); }
+  if(Auth.user){ await enterApp(); }
   else showLogin();
 })();
 
