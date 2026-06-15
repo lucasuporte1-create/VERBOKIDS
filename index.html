@@ -463,8 +463,8 @@ h1,h2,h3{font-family:var(--font-display);font-weight:700;margin:0;color:var(--in
       tiver role 'leader'/'admin' na tabela profiles.
    Enquanto estiver em branco, o app roda em "modo de teste" local.
    =========================================================== */
-const SUPABASE_URL = "";        // ex.: "https://xxxx.supabase.co"
-const SUPABASE_ANON_KEY = "";   // ex.: "eyJhbGciOi..."
+const SUPABASE_URL = "https://husczactaysmrynfnrwe.supabase.co/rest/v1/";        // ex.: "https://xxxx.supabase.co"
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh1c2N6YWN0YXlzbXJ5bmZucndlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk5NTk1NjgsImV4cCI6MjA5NTUzNTU2OH0.WvNp2HPdNk-DzKC3WPc7ntJssNrE4A5xtwl8Rl7qYd4";   // ex.: "eyJhbGciOi..."
 const USE_SUPABASE = !!(SUPABASE_URL && SUPABASE_ANON_KEY && window.supabase);
 const sb = USE_SUPABASE ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
 
