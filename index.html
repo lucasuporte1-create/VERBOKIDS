@@ -372,6 +372,24 @@ h1,h2,h3{font-family:var(--font-display);font-weight:700;margin:0;color:var(--in
 .logged-as .ava{width:38px;height:38px}
 .logged-as .person-name{font-size:14px}
 
+/* ---------- Botão de aviso (destaque pulsante) ---------- */
+.btn-attn{ position:relative; font-size:16px; padding:15px 18px;
+  animation:attnPulse 1.8s ease-in-out infinite; overflow:hidden; }
+.btn-attn svg{ width:21px; height:21px; }
+.btn-attn::after{ content:""; position:absolute; top:0; left:-60%; width:40%; height:100%;
+  background:linear-gradient(100deg, transparent, rgba(255,255,255,.45), transparent);
+  transform:skewX(-18deg); animation:attnShine 2.6s ease-in-out infinite; }
+@keyframes attnPulse{
+  0%,100%{ box-shadow:0 6px 16px rgba(63,191,143,.35); transform:translateZ(0) scale(1); }
+  50%{ box-shadow:0 8px 26px rgba(63,191,143,.65), 0 0 0 5px rgba(63,191,143,.18); transform:translateZ(0) scale(1.02); }
+}
+@keyframes attnShine{
+  0%,18%{ left:-60%; } 38%,100%{ left:140%; }
+}
+@media (prefers-reduced-motion:reduce){
+  .btn-attn{ animation:none; } .btn-attn::after{ display:none; }
+}
+
   </style>
 </head>
 <body>
@@ -1532,7 +1550,7 @@ function openSchedule(key){
     <div class="muted-txt">${fmtLong(occ.date)} ${occ.time?"• "+occ.time:""}</div></div></div>`;
 
   openModal("Escala do culto", head + `<div id="schedRooms">${renderBody()}</div>`,
-    `<button class="btn btn-wa btn-block" id="schedWa" style="margin-bottom:8px">
+    `<button class="btn btn-wa btn-block btn-attn" id="schedWa" style="margin-bottom:10px">
        <svg viewBox="0 0 24 24"><path d="M21 11.5a8.5 8.5 0 0 1-12.6 7.4L3 21l2.2-5.3A8.5 8.5 0 1 1 21 11.5z"/></svg> Avisar escalados no WhatsApp</button>
      <button class="btn btn-primary btn-block" id="schedSave">Salvar escala</button>`);
 
@@ -1835,7 +1853,7 @@ function wireLogin(){
   else showLogin();
 })();
 
-/* Versão arquivo único: sem service worker (rode pela versão hospedada para offline/instalar) */
+/* Versão arquivo único: sem service worker */
 
   </script>
 </body>
